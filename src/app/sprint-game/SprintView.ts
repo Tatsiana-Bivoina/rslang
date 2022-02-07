@@ -19,7 +19,7 @@ export default class SprintView {
         </div>
         <p>Select difficulty level:</p>
         <div class="levels">
-          <button class="btn-level btn-level1 active">1</button>
+          <button class="btn-level btn-level1">1</button>
           <button class="btn-level btn-level2">2</button>
           <button class="btn-level btn-level3">3</button>
           <button class="btn-level btn-level4">4</button>
