@@ -1,7 +1,6 @@
 export enum Menu {
   rsLang = 'RS Lang',
-  textbook = 'Учебник',
-  dictionary = 'Словарь',
+  dictionary = 'Учебник',
   sprint = 'Спринт',
   audioCall = 'Аудиовызов',
   command = 'Команда',
