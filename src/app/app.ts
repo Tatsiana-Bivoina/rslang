@@ -1,4 +1,5 @@
 import { audioCallView } from './audiocall-game/view';
+import { loginView } from './authorization/view';
 import { dictionaryView } from './dictionary/view';
 import { mainView } from './main/view';
 import { sprintView } from './sprint-game/view';
@@ -7,6 +8,7 @@ const MAIN_BTN = 'button__main';
 const AUDIOCALL_BTN = 'button__audio-call';
 const SPRINT_BTN = 'button__sprint';
 const DICTIONARY_BTN = 'button__dictionary';
+const LOGIN_BTN = 'button__login';
 
 export class App {
   async start() {
@@ -19,6 +21,7 @@ export class App {
       <button class="button ${AUDIOCALL_BTN}">Audio-call</button>
       <button class="button ${SPRINT_BTN}">Sprint</button>
       <button class="button ${DICTIONARY_BTN}">Dictionary</button>
+      <button class="button ${LOGIN_BTN}">Login</button>
     </div>
 `;
     body.appendChild(page);
@@ -35,6 +38,7 @@ export class App {
       if (target.classList.contains(AUDIOCALL_BTN)) await this.drawPage(audioCallView);
       if (target.classList.contains(SPRINT_BTN)) await this.drawPage(sprintView);
       if (target.classList.contains(DICTIONARY_BTN)) await this.drawPage(dictionaryView);
+      if (target.classList.contains(LOGIN_BTN)) await this.drawPage(loginView);
     });
   }
 
