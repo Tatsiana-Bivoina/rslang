@@ -3,6 +3,7 @@ import { loginView } from './authorization/view';
 import { dictionaryView } from './dictionary/view';
 import { mainView } from './main/view';
 import { sprintView } from './sprint-game/view';
+import { Menu } from './abstracts';
 
 const MAIN_BTN = 'button__main';
 const AUDIOCALL_BTN = 'button__audio-call';
@@ -13,6 +14,20 @@ const LOGIN_BTN = 'button__login';
 export class App {
   async start() {
     const body: HTMLBodyElement = document.getElementsByTagName('body')[0] as HTMLBodyElement;
+
+    // отрисовка меню в хедере
+    const header: HTMLDivElement = document.createElement('header') as HTMLDivElement;
+    header.classList.add('header');
+    header.innerHTML = `
+      <span class="menu">${Menu.rsLang}</span>
+      <span class="menu">${Menu.textbook}</span>
+      <span class="menu">${Menu.dictionary}</span>
+      <span class="menu">${Menu.sprint}</span>
+      <span class="menu">${Menu.audioCall}</span>
+      <span class="menu">${Menu.statistic}</span>
+      <span class="menu">${Menu.command}</span>
+      <span class="menu">${Menu.login}</span>
+    `;
 
     // отрисовка кнопок на странице
     const wrapper: HTMLDivElement = document.createElement('div');
@@ -26,6 +41,7 @@ export class App {
       <button class="button ${LOGIN_BTN}">Login</button>
     </div>
 `;
+    body.append(header);
     body.appendChild(wrapper);
 
     const content: HTMLDivElement = document.createElement('main') as HTMLDivElement;
