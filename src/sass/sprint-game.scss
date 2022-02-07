@@ -1,0 +1,131 @@
+body {
+  width: 100vw;
+  margin: 0;
+}
+
+.page {
+  width: inherit;
+  height: inherit;
+}
+
+.page__sprint {
+  width: inherit;
+  height: 97vh;
+  background-image: url('../images/sprint-game/sprint-bg.jpg');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.btn {
+  position: fixed;
+  top: 60px;
+  width: 40px;
+  height: 40px;
+  background-color: rgba(255, 255, 255, 0.3);
+  border: 0;
+  outline: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  transition: 0.3s;
+  cursor: pointer;
+
+  &:hover {
+    background-color: rgb(195 155 106 / 50%);
+  }
+}
+
+.btn-fullscreen {
+  right: 40px;
+  background-image: url("../images/sprint-game/svg/fullscreen-open.svg");
+}
+
+:-webkit-full-screen .btn-fullscreen {
+  background-image: url("../images/sprint-game/svg/fullscreen-exit.svg");
+}
+
+.btn-exit {
+  left: 40px;
+  background-image: url("../images/sprint-game/svg/exit.svg");
+}
+
+.main-content {
+  position: relative;
+  max-width: 650px;
+  min-width: 300px;
+  min-height: 350px;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #526666;
+  text-transform: initial;
+  font-size: 1.5rem;
+  background-color: #f9efe1;
+  padding: 1%;
+  border-radius: 40px;
+  border: 10px solid #773e05;
+  box-sizing: border-box;
+
+  h2 {
+    font-size: 4rem;
+    margin-top: 0;
+    text-align: center;
+  }
+}
+
+.levels {
+  padding-left: 10%;
+}
+
+.btn-level {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border-color: #3a3126;
+  transition: .8s;
+
+  &:hover {
+    transform: scale(1.1);
+    cursor: pointer;
+  }
+
+  &.active {
+    border-color: #f50606;
+    border-width: 4px;
+    box-sizing: border-box;
+  }
+}
+
+.btn-level1 {
+  background-color: #decbb3;
+}
+
+.btn-level2 {
+  background-color: #d7bb98;
+}
+
+.btn-level3 {
+  background-color: #e5c091;
+}
+
+.btn-level4 {
+  background-color: #dfaf73;
+}
+
+.btn-level5 {
+  background-color: #db9946;
+}
+
+.btn-level6 {
+  background-color: #cf7607;
+}
+
+.btn-start {
+  width: 100px;
+  height: 40px;
+  background-color: #b4f354;
+  font-size: 1.4rem;
+  margin-left: 10%;
+  border-radius: 10px;
+}
