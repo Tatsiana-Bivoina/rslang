@@ -14,7 +14,7 @@ export class App {
   async start() {
     const body: HTMLBodyElement = document.getElementsByTagName('body')[0] as HTMLBodyElement;
     const page: HTMLDivElement = document.createElement('div');
-    page.classList.add('page');
+    page.classList.add('wrapper');
     page.innerHTML = `
     <div class="buttons buttons__pages">
       <button class="button ${MAIN_BTN}">Main</button>
@@ -26,8 +26,8 @@ export class App {
 `;
     body.appendChild(page);
 
-    const content: HTMLDivElement = document.createElement('div') as HTMLDivElement;
-    content.classList.add('content');
+    const content: HTMLDivElement = document.createElement('main') as HTMLDivElement;
+    content.classList.add('page');
     page.appendChild(content);
 
     await this.drawPage(mainView);
@@ -44,7 +44,7 @@ export class App {
 
   async drawPage(view: () => Promise<HTMLDivElement>): Promise<void> {
     const contentHTML = await view();
-    const content = document.querySelector('.content') as HTMLDivElement;
+    const content = document.querySelector('.page') as HTMLDivElement;
     content.innerHTML = '';
     content.appendChild(contentHTML);
   }
