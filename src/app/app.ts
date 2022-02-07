@@ -13,9 +13,11 @@ const LOGIN_BTN = 'button__login';
 export class App {
   async start() {
     const body: HTMLBodyElement = document.getElementsByTagName('body')[0] as HTMLBodyElement;
-    const page: HTMLDivElement = document.createElement('div');
-    page.classList.add('wrapper');
-    page.innerHTML = `
+
+    // отрисовка кнопок на странице
+    const wrapper: HTMLDivElement = document.createElement('div');
+    wrapper.classList.add('wrapper');
+    wrapper.innerHTML = `
     <div class="buttons buttons__pages">
       <button class="button ${MAIN_BTN}">Main</button>
       <button class="button ${AUDIOCALL_BTN}">Audio-call</button>
@@ -24,15 +26,17 @@ export class App {
       <button class="button ${LOGIN_BTN}">Login</button>
     </div>
 `;
-    body.appendChild(page);
+    body.appendChild(wrapper);
 
     const content: HTMLDivElement = document.createElement('main') as HTMLDivElement;
     content.classList.add('page');
-    page.appendChild(content);
+    wrapper.appendChild(content);
 
+    // отрисовка первоначального контента
     await this.drawPage(mainView);
 
-    page.addEventListener('click', async (e) => {
+    // отрисовка контента в зависимости от нажатой кнопки
+    wrapper.addEventListener('click', async (e) => {
       const target = e.target as Element;
       if (target.classList.contains(MAIN_BTN)) await this.drawPage(mainView);
       if (target.classList.contains(AUDIOCALL_BTN)) await this.drawPage(audioCallView);
