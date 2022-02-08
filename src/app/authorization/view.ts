@@ -4,40 +4,63 @@ import { Button } from './abstracts';
 export async function loginView(): Promise<HTMLDivElement> {
   const page: HTMLDivElement = document.createElement('div');
   page.classList.add('page__authorization');
-  page.innerHTML = `Authorization page`;
-
-  const authorizationForm: HTMLDivElement = createDiv(
-    `
-  <form action="/profile" method="post" enctype="multipart/form-data">
-    <input type="text" name="login" />
-    <input type="password" name="password" />
-  </form>
-  `,
-    'authorization'
-  );
+  page.innerHTML = 'Registration page';
 
   const registrationForm: HTMLDivElement = createDiv(
     `
-  <form action="/profile" method="post" enctype="multipart/form-data">
-    <input type="text" name="login" />
-    <input type="password" name="password" />
-    <input type="file" name="avatar" />
+  <form action="/profile" method="post" enctype="multipart/form-data" class="form">
+    <div class="form__field">
+      <label for="login">Логин: </label>
+      <input type="text" name="login" id="login" required />
+    </div>
+    <div class="form__field">
+      <label for="password">Пароль: </label>
+      <input type="password" name="password" id="password" required />
+    </div>
+    <div class="form__field">
+      <label for="image">Загрузить аватар</label>
+      <input type="file" name="avatar" id="image" />
+    </div>
+    <input type="submit" value="${Button.Register}" class="form__submit">
   </form>
+  <button class="button button__login">${Button.Login}</button>
   `,
     'registration'
   );
 
-  const loginButton: HTMLButtonElement = createButton(Button.Login, 'loginButton');
-  const registerButton: HTMLButtonElement = createButton(Button.Register, 'registerButton');
-  const logoutButton: HTMLButtonElement = createButton(Button.Logout, 'logoutButton');
+  const authorizationForm: HTMLDivElement = createDiv(
+    `
+  <form action="/profile" method="post" enctype="multipart/form-data" class="form">
+    <div class="form__field">
+      <label for="login">Логин: </label>
+      <input type="text" name="login" id="login" required />
+    </div>
+    <div class="form__field">
+      <label for="password">Пароль: </label>
+      <input type="password" name="password" id="password" required />
+    </div>
+    <input type="submit" value="${Button.Login}" class="form__submit">
+  </form>
+  <button class="button button__register">${Button.Register}</button>
+  `,
+    'authorization'
+  );
 
-  const forms = [registrationForm, authorizationForm];
-  for (const form of forms) {
-    form.append(loginButton);
-    form.append(registerButton);
-  }
+  page.append(registrationForm);
 
-  page.append(authorizationForm);
+  // кнопка "Войти" на странице регистрации
+  const loginBtn = page.querySelector('.button__login') as HTMLButtonElement;
+  loginBtn.addEventListener('click', () => {
+    page.innerHTML = 'Authorization page';
+    page.append(authorizationForm);
+
+    // кнопка "Зарегистрироваться" на странице авторизации
+    const registerButton = page.querySelector('.button__register') as HTMLButtonElement;
+    registerButton.addEventListener('click', () => {
+      page.innerHTML = 'Registration page';
+      page.append(registrationForm);
+    });
+  });
 
   return page;
 }
