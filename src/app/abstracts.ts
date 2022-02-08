@@ -7,3 +7,5 @@ export enum Menu {
   statistic = 'Статистика',
   login = 'Вход'
 }
+
+export const SERVER_URL = 'https://rslang-leanwords.herokuapp.com';

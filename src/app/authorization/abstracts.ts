@@ -3,3 +3,9 @@ export enum Button {
   Logout = 'Выйти',
   Register = 'Зарегистрироваться'
 }
+
+export interface IUser {
+  name: string;
+  email: string;
+  password: string;
+}
