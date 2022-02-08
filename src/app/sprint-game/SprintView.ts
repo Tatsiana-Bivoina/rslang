@@ -8,16 +8,16 @@ export default class SprintView {
       <button class="btn btn-exit"></button>
       <button class="btn btn-fullscreen"></button>
       <div class="main-content">
-        <h2>Sprint</h2>
+        <h2>Спринт</h2>
         <div>
-          <p>Choose if the translation matches the suggested word</p>
-          <p>Game control:</p>
+          <p>Выберите, соответствует ли перевод предложенному слову</p>
+          <p>Управление игрой:</p>
           <ul>
-            <li>Use the mouse</li>
-            <li>Use the left or right keys on your keyboard</li>
+            <li>Используйте мышку</li>
+            <li>Используйте клавиши влево и вправо на клавиатуре</li>
           </ul>
         </div>
-        <p>Select difficulty level:</p>
+        <p>Выберите уровень сложности слов:</p>
         <div class="levels">
           <button class="btn-level btn-level1">1</button>
           <button class="btn-level btn-level2">2</button>
@@ -25,11 +25,40 @@ export default class SprintView {
           <button class="btn-level btn-level4">4</button>
           <button class="btn-level btn-level5">5</button>
           <button class="btn-level btn-level6">6</button>
-          <button class="btn-start">start</button>
+          <button class="btn-start" disabled>Начать</button>
         </div>
       </div>
     `;
     return page;
+  }
+
+  sprintGameView() {
+    const mainContent: HTMLElement | null = document.querySelector('.main-content');
+    if (mainContent) {
+      mainContent.innerHTML = '';
+      mainContent.innerHTML = `
+        <div class="timer">
+          <div class="countdown-number">
+            <span class="seconds"></span>
+          </div>
+        </div>
+        <div class="word-container">
+          <span>очки</span>
+          <span>+10 очков</span>
+          <div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+          <p>Word</p>
+          <p>Transcription</p>
+        </div>
+        <div class="btn-container">
+          <button class="btn-false">Неверно</button>
+          <button class="btn-true">Верно</button>
+        </div>
+      `;
+    }
   }
 }
 
