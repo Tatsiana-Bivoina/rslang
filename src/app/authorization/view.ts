@@ -1,5 +1,5 @@
 import { createDiv, createButton } from '../utils';
-import { Button, IUser } from './abstracts';
+import { Button, ErrorMessages, IStatus, IUser } from './abstracts';
 import { createUser } from './controller';
 
 export async function loginView(): Promise<HTMLDivElement> {
@@ -19,6 +19,7 @@ export async function loginView(): Promise<HTMLDivElement> {
       <input type="password" name="password" id="password" class="form__password" minlength="8" required />
     </div>
     <input type="submit" value="${Button.Register}" class="form__submit">
+    <div class="error-msg"></div>
   </form>
   <button class="button button__login">${Button.Login}</button>
   `,
@@ -37,6 +38,7 @@ export async function loginView(): Promise<HTMLDivElement> {
       <input type="password" name="password" id="password" class="form__password" minlength="8" required />
     </div>
     <input type="submit" value="${Button.Login}" class="form__submit">
+    <div class="error-msg"></div>
   </form>
   <button class="button button__register">${Button.Register}</button>
   `,
@@ -62,7 +64,11 @@ export async function loginView(): Promise<HTMLDivElement> {
   const form = page.querySelector('.form') as HTMLFormElement;
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    await createUser(form);
+    const response = await createUser(form);
+    if (Object.keys(response).includes('status') && (response as IStatus).status === 417) {
+      const error = form.querySelector('.error-msg') as HTMLDivElement;
+      error.innerHTML = ErrorMessages.loginInUsed;
+    }
   });
 
   return page;

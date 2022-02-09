@@ -1,7 +1,7 @@
-import { IUser } from './abstracts';
+import { IStatus, IUser, IUserResponse } from './abstracts';
 import { SERVER_URL } from '../abstracts';
 
-export async function createUser(form: HTMLFormElement): Promise<object> {
+export async function createUser(form: HTMLFormElement): Promise<IUserResponse | IStatus> {
   const user = getUserData(form);
   console.log(`start creating user ${JSON.stringify(user)}`);
   const rawResponse = await fetch(`${SERVER_URL}/users`, {
@@ -11,9 +11,15 @@ export async function createUser(form: HTMLFormElement): Promise<object> {
     },
     body: JSON.stringify(user)
   });
-  console.log(`rawResponse: ${rawResponse.status}`);
-  const content = await rawResponse.json();
-  return content;
+  let jsonResponse;
+
+  if (rawResponse.status === 200) {
+    jsonResponse = await rawResponse.json();
+  } else {
+    jsonResponse = { status: rawResponse.status };
+  }
+  console.log(`jsonResponse: ${JSON.stringify(jsonResponse)}`);
+  return jsonResponse;
 }
 
 function getUserData(form: HTMLFormElement) {
