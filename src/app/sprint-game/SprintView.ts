@@ -43,15 +43,15 @@ export default class SprintView {
           </div>
         </div>
         <div class="word-container">
-          <span>очки</span>
-          <span>+10 очков</span>
-          <div>
-            <div></div>
-            <div></div>
-            <div></div>
+          <p class="total-points">0</p>
+          <p class="bonus">+10 очков</p>
+          <div class="checkbox-container">
+            <div class="checkbox"></div>
+            <div class="checkbox"></div>
+            <div class="checkbox"></div>
           </div>
-          <p>Word</p>
-          <p>Transcription</p>
+          <p class="word">Word</p>
+          <p class="translation">Transcription</p>
         </div>
         <div class="btn-container">
           <button class="btn-false">Неверно</button>

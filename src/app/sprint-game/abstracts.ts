@@ -14,3 +14,11 @@ export type Word = {
   textMeaningTranslate: string;
   textExampleTranslate: string;
 };
+
+export type WordStatistic = {
+  word: string;
+  audio: string;
+  transcription: string;
+  wordTranslate: string;
+  isRight: boolean;
+};
