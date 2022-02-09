@@ -59,21 +59,10 @@ export async function loginView(): Promise<HTMLDivElement> {
     });
   });
 
-  async function sendData() {
-    const fd = new FormData(form);
-    const user: IUser = {
-      name: fd.get('login') as string,
-      password: fd.get('password') as string,
-      email: `${fd.get('login')}@mail.ru`
-    };
-    const result = await createUser(user);
-    console.log(result);
-  }
-
   const form = page.querySelector('.form') as HTMLFormElement;
   form.addEventListener('submit', async (event) => {
     event.preventDefault();
-    await sendData();
+    await createUser(form);
   });
 
   return page;
