@@ -1,3 +1,5 @@
+$text-color: #272a2a;
+
 body {
   width: 100vw;
   margin: 0;
@@ -22,17 +24,17 @@ body {
   top: 60px;
   width: 40px;
   height: 40px;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: transparent;
   border: 0;
   outline: 0;
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   transition: 0.3s;
-  cursor: pointer;
 
   &:hover {
-    background-color: rgb(195 155 106 / 50%);
+    cursor: pointer;
+    transform: scale(1.1);
   }
 }
 
@@ -58,13 +60,12 @@ body {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  color: #526666;
+  color: $text-color;
   text-transform: initial;
   font-size: 1.5rem;
-  background-color: #f9efe1;
-  padding: 1%;
-  border-radius: 40px;
-  border: 10px solid #773e05;
+  background-color: #fff;
+  padding: 2%;
+  border-radius: 10px;
   box-sizing: border-box;
 
   h2 {
@@ -82,7 +83,7 @@ body {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border-color: #3a3126;
+  border-color: #272a2a;
   transition: .8s;
 
   &:hover {
@@ -91,46 +92,48 @@ body {
   }
 
   &.active {
-    border-color: #f50606;
     border-width: 4px;
     box-sizing: border-box;
   }
 }
 
 .btn-level1 {
-  background-color: #decbb3;
+  background-color: #efece7;
 }
 
 .btn-level2 {
-  background-color: #d7bb98;
+  background-color: #e3dfdb;
 }
 
 .btn-level3 {
-  background-color: #e5c091;
+  background-color: #cfcbc7;
 }
 
 .btn-level4 {
-  background-color: #dfaf73;
+  background-color: #a9a5a1;
 }
 
 .btn-level5 {
-  background-color: #db9946;
+  background-color: #85807b;
 }
 
 .btn-level6 {
-  background-color: #cf7607;
+  background-color: #5c5a58;
 }
 
 .btn-start {
   width: 100px;
   height: 40px;
-  background-color: #b4f354;
+  color: rgba(0, 0, 0, 0.26);
+  background-color: rgba(0, 0, 0, 0.12);
   font-size: 1.4rem;
   margin-left: 10%;
-  border-radius: 10px;
+  border-radius: 5px;
 
   &.active {
-    border: 4px solid #037917;
+    color: #fff;
+    background-color: #3f51b5;
+    box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
     transition: .8s;
 
     &:hover {
@@ -156,7 +159,7 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background: #cec560;
+  background-color: #e0e0e0;
   border: 2px solid #241919;
 
   span {
@@ -172,13 +175,12 @@ body {
 
 .word {
   font-size: 5rem;
-  margin: 10px 0;
+  margin: 30px 0;
 }
 
 .translation {
   font-size: 2rem;
-  color: #006400;
-  margin-bottom: 50px;
+  margin-bottom: 0;
 }
 
 .btn-container {
@@ -192,7 +194,8 @@ body {
   width: 120px;
   height: 50px;
   margin: 0 20px;
-  border-radius: 10px;
+  border-radius: 5px;
+  color: #fff;
 
   &:hover {
     cursor: pointer;
@@ -205,11 +208,21 @@ body {
 }
 
 .btn-false {
-  background-color: #f40a0a;
+  background-color: #f50057;
 }
 
 .btn-true {
-  background-color: green;
+  background-color: #3f51b5;
+}
+
+.progress {
+  display: flex;
+  justify-content: center;
+}
+
+.progress-item {
+  width: 50px;
+  height: 50px;
 }
 
 .checkbox-container {
@@ -223,9 +236,15 @@ body {
   height: 30px;
   border-radius: 50%;
   margin: 0 10px;
-  background-color: #e2b174;
+  background-color: #e0e0e0;
 }
 
 .total-points {
+  margin-top: 0;
   font-size: 3rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  line-height: 1.167;
+  letter-spacing: 0em;
+  color: #f50057;
 }

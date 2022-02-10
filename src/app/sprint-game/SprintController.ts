@@ -77,6 +77,7 @@ export default class SprintController {
         this.createWordsArr();
         this.addListenerToBtnTrue();
         this.addListenerToBtnFalse();
+        this.addListenerToArrows();
         this.updateWordContainer();
         this.startTimer();
       }
@@ -108,8 +109,8 @@ export default class SprintController {
       if (secondsBlock && countdownNumber && num) {
         secondsBlock.innerHTML = `${seconds}`;
         if (seconds === 10) {
-          countdownNumber.setAttribute('style', 'border-color: #fa0303');
-          num.setAttribute('style', 'color: #fa0303');
+          countdownNumber.setAttribute('style', 'border-color: #f50057');
+          num.setAttribute('style', 'color: #f50057');
         }
       }
       seconds -= 1;
@@ -178,6 +179,19 @@ export default class SprintController {
     });
   }
 
+  private addListenerToArrows(): void {
+    document.addEventListener('keydown', (event) => {
+      if (event.code == 'ArrowRight') {
+        this.pressedBtn = 'btnTrue';
+        this.nextWord();
+      }
+      if (event.code == 'ArrowLeft') {
+        this.pressedBtn = 'btnFalse';
+        this.nextWord();
+      }
+    });
+  }
+
   private addListenerToBtnFalse(): void {
     const btnFalse: Element | null = document.querySelector('.btn-false');
     btnFalse?.addEventListener('click', () => {
@@ -233,7 +247,10 @@ export default class SprintController {
 
   private paitCheckbox(checkboxes: NodeListOf<Element>): void {
     for (let i = 0; i < this.checkboxCount; i++) {
-      checkboxes[i].setAttribute('style', 'background-color: #008000');
+      checkboxes[i].setAttribute(
+        'style',
+        'background-image: url("../images/sprint-game/svg/circle-check-solid.svg"); background-repeat: no-repeat; bacground-size: cover'
+      );
     }
   }
 
@@ -245,22 +262,41 @@ export default class SprintController {
 
   private changeBonusPrice(): void {
     const bonus: Element | null = document.querySelector('.bonus');
-    if (this.counter === 0) this.price = 10;
+    if (this.counter === 0) {
+      this.price = 10;
+      this.showProgress(0);
+    }
     if (this.counter === 4) {
       this.price *= 2;
+      this.showProgress(2);
     }
-    if (this.counter === 7) {
+    if (this.counter === 8) {
       this.price *= 5;
+      this.showProgress(3);
     }
-    if (this.counter === 10) {
+    if (this.counter === 12) {
       this.price *= 10;
+      this.showProgress(4);
     }
     if (bonus) bonus.innerHTML = `+${this.price} очков`;
   }
 
+  private showProgress(count: number) {
+    const progressItems: NodeListOf<Element> = document.querySelectorAll('.progress-item');
+    if (count > 0) {
+      for (let i = 0; i < count; i++) {
+        progressItems[i].removeAttribute('style');
+      }
+    } else {
+      for (let i = 1; i < 4; i++) {
+        progressItems[i].setAttribute('style', 'display: none');
+      }
+    }
+  }
+
   private countTotalPoints(): void {
     const totalPoints: Element | null = document.querySelector('.total-points');
-    this.totalPoints = this.price * this.counter;
+    this.totalPoints += this.price;
     if (totalPoints) totalPoints.innerHTML = `${this.totalPoints}`;
   }
 }
