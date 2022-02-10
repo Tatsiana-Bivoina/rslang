@@ -7,6 +7,9 @@ import {
   ErrorMessages
 } from './abstracts';
 import { SERVER_URL } from '../abstracts';
+import { UserData } from './storage';
+
+const userData = new UserData();
 
 // создание пользователя
 async function createUser(form: HTMLFormElement): Promise<IUserRegisterResponse | IStatus> {
@@ -62,20 +65,12 @@ function getUserData(form: HTMLFormElement): IUserRegister {
   return user;
 }
 
-// сохранение данных в localStorage
-function saveData(userData: IUserAuthResponse | IStatus) {
-  const data = JSON.stringify(userData);
-  localStorage.setItem('data', data);
-}
-
 // отрисовка приветствия в меню
 export function drawUserInfo() {
-  const dataStr = localStorage.getItem('data');
+  const name = userData.name;
   const loginField = document.querySelector('.login') as HTMLSpanElement;
   let loginHtml = 'Вход';
-  if (dataStr !== null) {
-    const dataObj: IUserAuthResponse = JSON.parse(dataStr);
-    const name = dataObj['name'];
+  if (name) {
     loginHtml = `Привет, ${name}`;
   }
   loginField.innerText = loginHtml;
@@ -102,6 +97,8 @@ export async function login(form: HTMLFormElement) {
     error.innerHTML = ErrorMessages.incorrectEmail;
     return;
   }
-  saveData(loginResponse);
+
+  // сохраним все данные в localStorage
+  userData.saveData(loginResponse as IUserAuthResponse);
   drawUserInfo();
 }

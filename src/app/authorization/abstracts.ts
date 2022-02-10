@@ -9,6 +9,14 @@ export enum ErrorMessages {
   incorrectEmail = 'Incorrect e-mail or password'
 }
 
+export enum Data {
+  token = 'token',
+  refreshToken = 'refreshToken',
+  userId = 'userId',
+  name = 'name',
+  tokenCreationDate = 'tokenCreationDate'
+}
+
 // пользователь на основе формы регистрации
 export interface IUserRegister {
   name: string;
