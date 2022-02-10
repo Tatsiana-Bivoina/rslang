@@ -5,21 +5,39 @@ export enum Button {
 }
 
 export enum ErrorMessages {
-  loginInUsed = 'This login already in use!'
+  emailInUsed = 'This email already in use!',
+  incorrectEmail = 'Incorrect e-mail or password'
 }
 
-export interface IUser {
+// пользователь на основе формы регистрации
+export interface IUserRegister {
   name: string;
   email: string;
   password: string;
 }
 
-export interface IUserResponse {
+export interface IUserLogin {
+  email: string;
+  password: string;
+}
+
+// статус ответа сервера
+export interface IStatus {
+  status: number;
+}
+
+// ответ сервера при создании пользователя
+export interface IUserRegisterResponse {
   id: string;
   name: string;
   email: string;
 }
 
-export interface IStatus {
-  status: number;
+// ответ сервера при авторизации
+export interface IUserAuthResponse {
+  message: string;
+  token: string;
+  refreshToken: string;
+  userId: string;
+  name: string;
 }

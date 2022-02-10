@@ -19,7 +19,7 @@ export class App {
       <span class="menu">${Menu.audioCall}</span>
       <span class="menu">${Menu.statistic}</span>
       <span class="menu">${Menu.command}</span>
-      <span class="menu">${Menu.login}</span>
+      <span class="menu login">${Menu.login}</span>
     `;
 
     const main: HTMLDivElement = document.createElement('main') as HTMLDivElement;

@@ -1,18 +1,22 @@
 import { createDiv, createButton } from '../utils';
-import { Button, ErrorMessages, IStatus, IUser } from './abstracts';
-import { createUser } from './controller';
+import { Button, ErrorMessages, IStatus } from './abstracts';
+import { login, register } from './controller';
 
 export async function loginView(): Promise<HTMLDivElement> {
   const page: HTMLDivElement = document.createElement('div');
   page.classList.add('page__authorization');
   page.innerHTML = 'Registration page';
 
-  const registrationForm: HTMLDivElement = createDiv(
+  const registrationDivForm: HTMLDivElement = createDiv(
     `
-  <form action="/" method="post" enctype="multipart/form-data" class="form">
+  <form action="/" method="post" enctype="multipart/form-data" class="form form_register">
     <div class="form__field">
-      <label for="login">Логин: </label>
-      <input type="text" name="login" id="login" class="form__login" required />
+      <label for="name">Имя: </label>
+      <input type="text" name="name" id="name" class="form__name" required />
+    </div>
+    <div class="form__field">
+      <label for="email">Почта: </label>
+      <input type="text" name="email" id="email" class="form__email" required />
     </div>
     <div class="form__field">
       <label for="password">Пароль: </label>
@@ -26,12 +30,12 @@ export async function loginView(): Promise<HTMLDivElement> {
     'registration'
   );
 
-  const authorizationForm: HTMLDivElement = createDiv(
+  const authorizationDivForm: HTMLDivElement = createDiv(
     `
-  <form action="/" method="post" enctype="multipart/form-data" class="form">
+  <form action="/" method="post" enctype="multipart/form-data" class="form form_login">
     <div class="form__field">
-      <label for="login">Логин: </label>
-      <input type="text" name="login" id="login" class="form__login" required />
+      <label for="email">Почта: </label>
+      <input type="email" name="email" id="email" class="form__email" required />
     </div>
     <div class="form__field">
       <label for="password">Пароль: </label>
@@ -45,30 +49,32 @@ export async function loginView(): Promise<HTMLDivElement> {
     'authorization'
   );
 
-  page.append(registrationForm);
+  const registrationForm = registrationDivForm.querySelector('.form') as HTMLFormElement;
+  registrationForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    register(registrationForm);
+  });
+
+  const authorizationForm = authorizationDivForm.querySelector('.form') as HTMLFormElement;
+  authorizationForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    login(authorizationForm);
+  });
+
+  page.append(registrationDivForm);
 
   // кнопка "Войти" на странице регистрации
   const loginBtn = page.querySelector('.button__login') as HTMLButtonElement;
   loginBtn.addEventListener('click', () => {
     page.innerHTML = 'Authorization page';
-    page.append(authorizationForm);
+    page.append(authorizationDivForm);
 
     // кнопка "Зарегистрироваться" на странице авторизации
     const registerButton = page.querySelector('.button__register') as HTMLButtonElement;
     registerButton.addEventListener('click', () => {
       page.innerHTML = 'Registration page';
-      page.append(registrationForm);
+      page.append(registrationDivForm);
     });
-  });
-
-  const form = page.querySelector('.form') as HTMLFormElement;
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault();
-    const response = await createUser(form);
-    if (Object.keys(response).includes('status') && (response as IStatus).status === 417) {
-      const error = form.querySelector('.error-msg') as HTMLDivElement;
-      error.innerHTML = ErrorMessages.loginInUsed;
-    }
   });
 
   return page;
