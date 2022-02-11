@@ -2,6 +2,7 @@ $text-color: #272a2a;
 $color-pink: #f50057;
 $color-blue: #3f51b5;
 $color-light-grey: #e0e0e0;
+$color-white: #fff;
 
 body {
   width: 100vw;
@@ -134,7 +135,7 @@ body {
   border-radius: 5px;
 
   &.active {
-    color: #fff;
+    color: $color-white;
     background-color: $color-blue;
     box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
     transition: .8s;
@@ -198,7 +199,7 @@ body {
   height: 50px;
   margin: 0 20px;
   border-radius: 5px;
-  color: #fff;
+  color: $color-white;
 
   &:hover {
     cursor: pointer;
@@ -250,4 +251,132 @@ body {
   line-height: 1.167;
   letter-spacing: 0em;
   color: $color-pink;
+}
+
+.total-points-container {
+  padding: 16px 0;
+  text-align: center;
+}
+
+.total-points-title {
+  font-size: 1.25rem;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.0075em;
+}
+
+.words-container {
+  height: 500px;
+  width: 100%;
+  overflow-y: scroll;
+  border-top: 1px solid rgba(0, 0, 0, 0.12);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mistakes-title,
+.correct-title {
+  color: rgba(0, 0, 0, 0.54);
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 400;
+  line-height: 1.75;
+  letter-spacing: 0.00938em;
+
+  span {
+    color: $color-white;
+    padding: 2px 8px;
+    margin-left: 16px;
+    border-radius: 8px;
+    background-color: #f44336;
+  }
+}
+
+.correct-title {
+  span {
+    background-color: $color-blue;
+  }
+}
+
+.mistakes-list,
+.correct-list {
+  padding: 0;
+}
+
+.items {
+  width: 100%;
+  display: flex;
+  position: relative;
+  box-sizing: border-box;
+  text-align: left;
+  align-items: center;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  justify-content: flex-start;
+  text-decoration: none;
+}
+
+.items-elem {
+  margin: 0 20px;
+}
+
+.item-btn {
+  width: 35px;
+  height: 30px;
+  margin: 0;
+  background-image: url(../images/sprint-game/svg/volume.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  background-color: transparent;
+  border: none;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(1);
+  }
+}
+
+.statistic-btn-container {
+  display: flex;
+  justify-content: space-between;
+  padding-top: 30px;
+}
+
+.statistic-btn {
+  min-width: 64px;
+  height: 45px;
+  padding: 6px 16px;
+  font-size: 0.875rem;
+  box-sizing: border-box;
+  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-weight: 600;
+  line-height: 1.75;
+  border-radius: 5px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
+  transition: .8s;
+
+  &:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+  }
+
+  &:active {
+    transform: scale(1);
+  }
+}
+
+.btn-leave {
+  color: rgba(0, 0, 0, 0.87);
+  background-color: #e0e0e0;
+}
+
+.btn-restart {
+  color: $color-white;
+  background-color: $color-blue;
 }

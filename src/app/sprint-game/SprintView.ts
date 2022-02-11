@@ -78,11 +78,30 @@ export default class SprintView {
       `;
     }
   }
-}
 
-// export async function sprintView(): Promise<HTMLDivElement> {
-//   const page: HTMLDivElement = document.createElement('div');
-//   page.classList.add('page__sprint');
-//   page.innerHTML = `Sprint page`;
-//   return page;
-// }
+  sprintStatisticView() {
+    const mainContent: HTMLElement | null = document.querySelector('.main-content');
+    if (mainContent) {
+      mainContent.innerHTML = '';
+      mainContent.innerHTML = `
+        <div class="total-points-container">
+          <h3 class="total-points-title"></h3>
+        </div>
+        <div class="words-container">
+          <div class="mistakes-block">
+            <h5 class="mistakes-title">Слова с ошибками <span></span></h5>
+            <ul class="mistakes-list"></ul>
+          </div>
+          <div class="correct-block">
+            <h5 class="correct-title">Изученные слова <span></span></h5>
+            <ul class="correct-list"></ul>
+          </div>
+        </div>
+        <div class="statistic-btn-container">
+          <button class="btn-leave statistic-btn">Закончить игру</button>
+          <button class="btn-restart statistic-btn">Еще раз</button>
+        </div>
+      `;
+    }
+  }
+}

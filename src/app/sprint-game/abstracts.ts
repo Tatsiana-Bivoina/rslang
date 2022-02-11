@@ -22,3 +22,8 @@ export type WordStatistic = {
   wordTranslate: string;
   isRight: boolean;
 };
+
+export type UserChoiseOptional = {
+  correctCount: number;
+  errorCount: number;
+};
