@@ -12,17 +12,15 @@ export async function loginView(): Promise<HTMLDivElement> {
   const registrationDivForm: HTMLDivElement = createDiv(
     `
   <form action="/" method="post" enctype="multipart/form-data" class="form form_register">
+    <div class="form__heading">Регистрация</div>
     <div class="form__field">
-      <label for="name">Имя: </label>
-      <input type="text" name="name" id="name" class="form__name" required />
+      <input type="text" name="name" id="name" class="form__name" placeholder="Имя" required />
     </div>
     <div class="form__field">
-      <label for="email">Почта: </label>
-      <input type="text" name="email" id="email" class="form__email" required />
+      <input type="text" name="email" id="email" class="form__email" placeholder="Почта" required />
     </div>
     <div class="form__field">
-      <label for="password">Пароль: </label>
-      <input type="password" name="password" id="password" class="form__password" minlength="8" required />
+      <input type="password" name="password" id="password" class="form__password" minlength="8" placeholder="Пароль" required />
     </div>
     <input type="submit" value="${Button.Register}" class="form__submit">
     <div class="error-msg"></div>
@@ -35,13 +33,12 @@ export async function loginView(): Promise<HTMLDivElement> {
   const authorizationDivForm: HTMLDivElement = createDiv(
     `
   <form action="/" method="post" enctype="multipart/form-data" class="form form_login">
+    <div class="form__heading">Авторизация</div>
     <div class="form__field">
-      <label for="email">Почта: </label>
-      <input type="email" name="email" id="email" class="form__email" required />
+      <input type="email" name="email" id="email" class="form__email" placeholder="Почта" required />
     </div>
     <div class="form__field">
-      <label for="password">Пароль: </label>
-      <input type="password" name="password" id="password" class="form__password" minlength="8" required />
+      <input type="password" name="password" id="password" class="form__password" minlength="8" placeholder="Пароль" required />
     </div>
     <input type="submit" value="${Button.Login}" class="form__submit">
     <div class="error-msg"></div>
