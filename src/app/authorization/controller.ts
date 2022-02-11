@@ -6,8 +6,10 @@ import {
   IUserRegisterResponse,
   ErrorMessages
 } from './abstracts';
-import { SERVER_URL } from '../abstracts';
+import { Menu, SERVER_URL } from '../abstracts';
 import { UserData } from './storage';
+import { drawPage } from '../app';
+import { mainView } from '../main/view';
 
 const userData = new UserData();
 
@@ -69,11 +71,40 @@ function getUserData(form: HTMLFormElement): IUserRegister {
 export function drawUserInfo() {
   const name = userData.name;
   const loginField = document.querySelector('.login') as HTMLSpanElement;
-  let loginHtml = 'Вход';
   if (name) {
-    loginHtml = `Привет, ${name}`;
+    const loginHtml = `
+    Привет, ${name}
+    <span class="dropdown-content">
+      <span class="dropdown-content__item item-exit">Выйти</span>
+    </span>
+    `;
+    loginField.innerHTML = loginHtml;
+
+    // показать выпадающее меню при клике
+    const dropDownContent = loginField.querySelector('.dropdown-content') as HTMLSpanElement;
+    loginField.addEventListener('click', () => {
+      dropDownContent.classList.toggle('show');
+    });
+
+    // закрывать раскрывающийся список при клике за его пределами
+    window.addEventListener('click', (event) => {
+      const target = event.target as Element;
+
+      // проверяем, что кликаем не по кнопке логина
+      if (!target.matches('.login')) {
+        if (target.matches('.item-exit')) {
+          // если кликаем по кнопке "Выход"
+          logOut();
+          return;
+        }
+        if (dropDownContent.classList.contains('show')) {
+          dropDownContent.classList.remove('show');
+        }
+      }
+    });
+  } else {
+    loginField.innerHTML = Menu.login;
   }
-  loginField.innerText = loginHtml;
 }
 
 // вызывается при регистрации нового пользователя
@@ -103,4 +134,11 @@ export async function login(form: HTMLFormElement): Promise<boolean> {
   drawUserInfo();
   // вернем true, если логин успешен
   return true;
+}
+
+// вызывается при логауте
+function logOut() {
+  userData.clear();
+  drawPage(mainView);
+  drawUserInfo();
 }

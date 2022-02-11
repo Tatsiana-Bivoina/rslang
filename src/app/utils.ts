@@ -15,3 +15,12 @@ export function createDiv(innerHTML: string, ...classes: string[]): HTMLDivEleme
   div.innerHTML = innerHTML;
   return div;
 }
+
+export function createSpan(innerHTML: string, ...classes: string[]): HTMLSpanElement {
+  const span = document.createElement('span');
+  for (const _class of classes) {
+    span.classList.add(_class);
+  }
+  span.innerHTML = innerHTML;
+  return span;
+}
