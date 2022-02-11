@@ -2,7 +2,8 @@ import { audioCallView } from './audiocall-game/view';
 import { loginView } from './authorization/view';
 import { dictionaryView } from './dictionary/view';
 import { mainView } from './main/view';
-import { sprintView } from './sprint-game/view';
+import SprintView from './sprint-game/SprintView';
+import SprintController from './sprint-game/SprintController';
 import { Menu } from './abstracts';
 import { drawUserInfo } from './authorization/controller';
 
@@ -46,7 +47,11 @@ export class App {
           await drawPage(audioCallView);
           break;
         case Menu.sprint:
-          await drawPage(sprintView);
+          const sprint = new SprintView();
+          const sprintController = new SprintController();
+          await drawPage(sprint.sprintView);
+          await sprintController.toggleFullScreen();
+          await sprintController.chooseLevel();
           break;
         case Menu.dictionary:
           await drawPage(dictionaryView);
