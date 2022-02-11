@@ -77,28 +77,30 @@ export function drawUserInfo() {
 }
 
 // вызывается при регистрации нового пользователя
-export async function register(form: HTMLFormElement) {
+export async function register(form: HTMLFormElement): Promise<boolean> {
   const registerResponse = await createUser(form);
   if (Object.keys(registerResponse).includes('status') && (registerResponse as IStatus).status === 417) {
     const error = form.querySelector('.error-msg') as HTMLDivElement;
     error.innerHTML = ErrorMessages.emailInUsed;
-    return;
+    return false;
   }
-  await login(form);
+  return await login(form);
 }
 
 // вызывается при логине
-export async function login(form: HTMLFormElement) {
+export async function login(form: HTMLFormElement): Promise<boolean> {
   const { email, password } = getUserData(form);
   const user: IUserLogin = { email: email, password: password };
   const loginResponse: IUserAuthResponse | IStatus = await authUser(user);
   if (Object.keys(loginResponse).includes('status')) {
     const error = form.querySelector('.error-msg') as HTMLDivElement;
     error.innerHTML = ErrorMessages.incorrectEmail;
-    return;
+    return false;
   }
 
   // сохраним все данные в localStorage
   userData.saveData(loginResponse as IUserAuthResponse);
   drawUserInfo();
+  // вернем true, если логин успешен
+  return true;
 }

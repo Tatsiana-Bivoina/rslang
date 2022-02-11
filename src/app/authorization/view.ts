@@ -1,6 +1,8 @@
-import { createDiv, createButton } from '../utils';
-import { Button, ErrorMessages, IStatus } from './abstracts';
+import { createDiv } from '../utils';
+import { Button } from './abstracts';
 import { login, register } from './controller';
+import { mainView } from '../main/view';
+import { drawPage } from '../app';
 
 export async function loginView(): Promise<HTMLDivElement> {
   const page: HTMLDivElement = document.createElement('div');
@@ -52,13 +54,21 @@ export async function loginView(): Promise<HTMLDivElement> {
   const registrationForm = registrationDivForm.querySelector('.form') as HTMLFormElement;
   registrationForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    register(registrationForm);
+    // если авторизация успешна, отрисовать главную страницу
+    const result = await register(registrationForm);
+    if (result) {
+      await drawPage(mainView);
+    }
   });
 
   const authorizationForm = authorizationDivForm.querySelector('.form') as HTMLFormElement;
   authorizationForm.addEventListener('submit', async (event) => {
     event.preventDefault();
-    login(authorizationForm);
+    // если логин успешен, отрисовать главную страницу
+    const result = await login(authorizationForm);
+    if (result) {
+      await drawPage(mainView);
+    }
   });
 
   page.append(registrationDivForm);

@@ -29,35 +29,35 @@ export class App {
     body.append(main);
 
     // отрисовка первоначального контента
-    await this.drawPage(mainView);
+    await drawPage(mainView);
 
     // отрисовка контента в зависимости от нажатой кнопки
     header.addEventListener('click', async (e) => {
       const target = e.target as Element;
       switch (target.textContent) {
         case Menu.rsLang:
-          await this.drawPage(mainView);
+          await drawPage(mainView);
           break;
         case Menu.audioCall:
-          await this.drawPage(audioCallView);
+          await drawPage(audioCallView);
           break;
         case Menu.sprint:
-          await this.drawPage(sprintView);
+          await drawPage(sprintView);
           break;
         case Menu.dictionary:
-          await this.drawPage(dictionaryView);
+          await drawPage(dictionaryView);
           break;
         case Menu.login:
-          await this.drawPage(loginView);
+          await drawPage(loginView);
           break;
       }
     });
   }
+}
 
-  async drawPage(view: () => Promise<HTMLDivElement>): Promise<void> {
-    const contentHTML = await view();
-    const content = document.querySelector('.page') as HTMLDivElement;
-    content.innerHTML = '';
-    content.appendChild(contentHTML);
-  }
+export async function drawPage(view: () => Promise<HTMLDivElement>): Promise<void> {
+  const contentHTML = await view();
+  const content = document.querySelector('.page') as HTMLDivElement;
+  content.innerHTML = '';
+  content.appendChild(contentHTML);
 }
