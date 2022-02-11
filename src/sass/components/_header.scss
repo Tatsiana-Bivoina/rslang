@@ -18,7 +18,7 @@
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: $color-form-bg;
   min-width: 160px;
   overflow: auto;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
@@ -31,7 +31,7 @@
     display: block;
 
     &:hover {
-      background-color: #ddd;
+      background-color: $color-form-bg-darker;
     }
   }
 }
