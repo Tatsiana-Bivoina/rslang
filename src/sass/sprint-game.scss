@@ -1,4 +1,7 @@
 $text-color: #272a2a;
+$color-pink: #f50057;
+$color-blue: #3f51b5;
+$color-light-grey: #e0e0e0;
 
 body {
   width: 100vw;
@@ -132,7 +135,7 @@ body {
 
   &.active {
     color: #fff;
-    background-color: #3f51b5;
+    background-color: $color-blue;
     box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
     transition: .8s;
 
@@ -159,7 +162,7 @@ body {
   width: 80px;
   height: 80px;
   border-radius: 50%;
-  background-color: #e0e0e0;
+  background-color: $color-light-grey;
   border: 2px solid #241919;
 
   span {
@@ -208,11 +211,11 @@ body {
 }
 
 .btn-false {
-  background-color: #f50057;
+  background-color: $color-pink;
 }
 
 .btn-true {
-  background-color: #3f51b5;
+  background-color: $color-blue;
 }
 
 .progress {
@@ -236,7 +239,7 @@ body {
   height: 30px;
   border-radius: 50%;
   margin: 0 10px;
-  background-color: #e0e0e0;
+  background-color: $color-light-grey;
 }
 
 .total-points {
@@ -246,5 +249,5 @@ body {
   font-weight: 400;
   line-height: 1.167;
   letter-spacing: 0em;
-  color: #f50057;
+  color: $color-pink;
 }

@@ -1,15 +1,8 @@
-import { Word, WordStatistic } from './abstracts';
-import SprintService from './SprintService';
-import SprintView from './SprintView';
+import { Word, WordStatistic } from '../abstracts';
+import SprintService from '../SprintService';
 
-export default class SprintController {
-  sprintService: SprintService;
-
-  sprintView: SprintView;
-
+export default class GameLogicController {
   rand: number;
-
-  allWords: Word[];
 
   wordsArr: string[];
 
@@ -30,10 +23,7 @@ export default class SprintController {
   checkboxCount: number;
 
   constructor() {
-    this.sprintService = new SprintService();
-    this.sprintView = new SprintView();
     this.rand = 0;
-    this.allWords = [];
     this.wordsArr = [];
     this.translationArr = [];
     this.wordStatistic = [];
@@ -45,61 +35,7 @@ export default class SprintController {
     this.checkboxCount = 0;
   }
 
-  async toggleFullScreen(): Promise<void> {
-    const btnFullScreen: HTMLElement | null = document.querySelector('.btn-fullscreen');
-    btnFullScreen?.addEventListener('click', () => {
-      if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen();
-      } else {
-        if (document.exitFullscreen) {
-          document.exitFullscreen();
-        }
-      }
-    });
-  }
-
-  async chooseLevel(): Promise<void> {
-    const btnsBlock: HTMLElement | null = document.querySelector('.levels');
-    const btnStart: HTMLElement | null = document.querySelector('.btn-start');
-
-    btnsBlock?.addEventListener('click', async (ev) => {
-      const btn = ev.target as HTMLElement;
-      if (btn.classList.contains('btn-level')) {
-        btnStart?.removeAttribute('disabled');
-        if (btnStart) this.addActiveClass(btn, btnStart);
-        const level: string = (Number(btn.textContent) - 1).toString();
-        const page: string = Math.floor(this.getRandomNumber()).toString();
-        const res: Word[] = await this.sprintService.getWords(level, page);
-        localStorage.setItem('words', JSON.stringify(res));
-      }
-      if (btn.classList.contains('btn-start')) {
-        this.sprintView.sprintGameView();
-        this.createWordsArr();
-        this.addListenerToBtnTrue();
-        this.addListenerToBtnFalse();
-        this.addListenerToArrows();
-        this.updateWordContainer();
-        this.startTimer();
-      }
-    });
-  }
-
-  private addActiveClass(pressedBtn: HTMLElement, btnStart: HTMLElement): void {
-    const levelBtns: NodeListOf<Element> = document.querySelectorAll('.btn-level');
-    levelBtns.forEach((el) => {
-      el.classList.remove('active');
-    });
-    pressedBtn.classList.add('active');
-    btnStart.classList.add('active');
-  }
-
-  private getRandomNumber(): number {
-    const min = 0;
-    const max = 30;
-    return Math.random() * (max - min) + min;
-  }
-
-  private startTimer(): void {
+  startTimer(): void {
     const secondsBlock: HTMLElement | null = document.querySelector('.seconds');
     const countdownNumber: HTMLElement | null = document.querySelector('.countdown-number');
     const num: HTMLElement | null = document.querySelector('.countdown-number span');
@@ -150,19 +86,15 @@ export default class SprintController {
     }
   }
 
-  private createWordsArr(): void {
-    const data: string | null = localStorage.getItem('words');
-    if (data) {
-      this.allWords = JSON.parse(data);
-      this.allWords.forEach((el) => {
-        this.wordsArr.push(el.word);
-        this.translationArr.push(el.wordTranslate);
-      });
-      this.getRandomTranslations();
-    }
+  createWordsArr(): void {
+    SprintService.wordCollection.forEach((el) => {
+      this.wordsArr.push(el.word);
+      this.translationArr.push(el.wordTranslate);
+    });
+    this.getRandomTranslations();
   }
 
-  private updateWordContainer(): void {
+  updateWordContainer(): void {
     const word: Element | null = document.querySelector('.word');
     const translation: Element | null = document.querySelector('.translation');
     if (word && translation) {
@@ -171,7 +103,7 @@ export default class SprintController {
     }
   }
 
-  private addListenerToBtnTrue(): void {
+  addListenerToBtnTrue(): void {
     const btnTrue: Element | null = document.querySelector('.btn-true');
     btnTrue?.addEventListener('click', () => {
       this.pressedBtn = 'btnTrue';
@@ -179,7 +111,7 @@ export default class SprintController {
     });
   }
 
-  private addListenerToArrows(): void {
+  addListenerToArrows(): void {
     document.addEventListener('keydown', (event) => {
       if (event.code == 'ArrowRight') {
         this.pressedBtn = 'btnTrue';
@@ -192,7 +124,7 @@ export default class SprintController {
     });
   }
 
-  private addListenerToBtnFalse(): void {
+  addListenerToBtnFalse(): void {
     const btnFalse: Element | null = document.querySelector('.btn-false');
     btnFalse?.addEventListener('click', () => {
       this.pressedBtn = 'btnFalse';
@@ -204,6 +136,8 @@ export default class SprintController {
     const isRight: boolean = this.checkIfTranslationRight();
     const checkboxes: NodeListOf<Element> = document.querySelectorAll('.checkbox');
     if (isRight) {
+      const audioWright: HTMLAudioElement = new Audio('../images/sprint-game/audio/wright.mp3');
+      audioWright.play();
       this.counter += 1;
       this.checkboxCount += 1;
       if (this.checkboxCount > 3) {
@@ -215,6 +149,8 @@ export default class SprintController {
       this.changeBonusPrice();
       this.countTotalPoints();
     } else {
+      const audioWrong: HTMLAudioElement = new Audio('../images/sprint-game/audio/wrong.mp3');
+      audioWrong.play();
       this.counter = 0;
       this.checkboxCount = 0;
       this.revokeCheckboxColor(checkboxes);
@@ -227,7 +163,7 @@ export default class SprintController {
   private checkIfTranslationRight(): boolean {
     const currentWord: string = this.wordsArr[this.index];
     const currentTranslation: string = this.translationArr[this.index];
-    const word: Word[] = this.allWords.filter((el) => el.word === currentWord);
+    const word: Word[] = SprintService.wordCollection.filter((el) => el.word === currentWord);
     const wordInfo = {
       word: word[0].word,
       audio: word[0].audio,
