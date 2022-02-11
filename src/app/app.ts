@@ -4,6 +4,7 @@ import { dictionaryView } from './dictionary/view';
 import { mainView } from './main/view';
 import { sprintView } from './sprint-game/view';
 import { Menu } from './abstracts';
+import { drawUserInfo } from './authorization/controller';
 
 export class App {
   async start() {
@@ -30,6 +31,9 @@ export class App {
 
     // отрисовка первоначального контента
     await drawPage(mainView);
+
+    // отрисовка приветствия, если есть данные о пользователе в local storage
+    drawUserInfo();
 
     // отрисовка контента в зависимости от нажатой кнопки
     header.addEventListener('click', async (e) => {
