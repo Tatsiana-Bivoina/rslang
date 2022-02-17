@@ -1,0 +1,15 @@
+.page {
+  &__authorization,
+  &__registration {
+    height: calc(100vh - 60px);
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+
+  &__authorization {
+    background-image: url('../images/authorization/login-bg1.jpg');
+  }
+  &__registration {
+    background-image: url('../images/authorization/register-bg2.jpg');
+  }
+}

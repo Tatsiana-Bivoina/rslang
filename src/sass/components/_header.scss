@@ -3,11 +3,16 @@
   height: 60px;
   align-items: center;
   justify-content: space-around;
-  background: $color-header-bg;
+  background: $color-primary;
   color: $color-font;
+  @extend %transition;
 
   & > * {
     cursor: pointer;
+  }
+
+  &:hover {
+    color: $color-font-darker;
   }
 }
 
