@@ -9,7 +9,6 @@ export default class SprintController {
   sprintService: SprintService;
 
   sprintView: SprintView;
-
   userData: UserData;
 
   rand: number;
@@ -88,7 +87,6 @@ export default class SprintController {
       if (btn.classList.contains('btn-level')) {
         btnStart?.removeAttribute('disabled');
         if (btnStart) this.addActiveClass(btn, btnStart);
-
         this.level = (Number(btn.textContent) - 1).toString();
         this.page = Math.floor(this.getRandomNumber()).toString();
         await this.getWordsCollection();
@@ -123,7 +121,7 @@ export default class SprintController {
       await drawPage(mainView);
     });
   }
-
+  
   private addActiveClass(pressedBtn: HTMLElement, btnStart: HTMLElement): void {
     const levelBtns: NodeListOf<Element> = document.querySelectorAll('.btn-level');
     levelBtns.forEach((el) => {
@@ -357,7 +355,6 @@ export default class SprintController {
   }
 
   // Statistic
-
   private updateStatisticPage(wordStatistic: GameResult[], totalPoints: number): void {
     const pointsTitle: Element | null = document.querySelector('.total-points-title');
     if (pointsTitle) {
@@ -440,7 +437,6 @@ export default class SprintController {
       });
     }
   }
-
   addListenerToBtnLeave() {
     const btnLeave: Element | null = document.querySelector('.btn-leave');
     if (btnLeave) {
