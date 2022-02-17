@@ -23,7 +23,7 @@ export async function teamView(): Promise<HTMLDivElement> {
     'Tatsiana Bivoina',
     'github.com/Tatsiana-Bivoina',
     'игра "Спринт", статистика',
-    '../images/team/member2.jpg'
+    '../images/team/member2.png'
   );
 
   const member3 = new TeamMember(
