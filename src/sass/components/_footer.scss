@@ -1,6 +1,6 @@
 .footer {
   height: 60px;
-  @include font($size: 1.8rem, $height: 1.5rem);
+  @include font($size: 1.5rem, $height: 1.6rem);
   @extend %font-prime;
   background: $color-light;
 }

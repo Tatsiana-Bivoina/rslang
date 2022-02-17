@@ -6,6 +6,7 @@ import SprintView from './sprint-game/SprintView';
 import SprintController from './sprint-game/SprintController';
 import { Menu } from './abstracts';
 import { drawUserInfo } from './authorization/controller';
+import { teamView } from './team/view';
 
 export class App {
   async start() {
@@ -72,6 +73,9 @@ export class App {
           break;
         case Menu.dictionary:
           await drawPage(dictionaryView);
+          break;
+        case Menu.team:
+          await drawPage(teamView);
           break;
         case Menu.login:
           await drawPage(loginView);

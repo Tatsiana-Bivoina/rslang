@@ -1,7 +1,8 @@
 .page {
   &__authorization,
-  &__registration {
-    height: calc(100vh - 120px);
+  &__registration,
+  &__team {
+    min-height: calc(100vh - 120px);
     background-repeat: no-repeat;
     background-size: cover;
   }
@@ -11,5 +12,18 @@
   }
   &__registration {
     background-image: url('../images/authorization/register-bg2.jpg');
+  }
+
+  &__team {
+    background-image: url('../images/team/team-bg.jpg');
+  }
+
+  &__title {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 40px 0;
+    @include font($size: 4rem, $height: 4.2rem);
+    @extend %font-prime;
+    color: $color-light;
   }
 }
