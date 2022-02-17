@@ -15,7 +15,7 @@ export class UserData {
     // если прошло менее 4 часов, вернём текущий токен, если более - сгенерим и вернём новый токен
     if (Date.now() - tokenCreationDate < 1000 * 60 * 60 * 4) return localStorage.getItem(Data.token) || '';
 
-    const rawResponse = await fetch(`${SERVER_URL}${this.userId}/tokens`, {
+    const rawResponse = await fetch(`${SERVER_URL}$/${this.userId}/tokens`, {
       method: 'GET',
       credentials: 'include',
       headers: {

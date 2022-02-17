@@ -3,26 +3,30 @@ import { UserChoiseOptional, Word } from './abstracts';
 export default class SprintService {
   static wordCollection: Word[] = [];
 
-  async getWords(level: string, page: string): Promise<void> {
+  async getWords(level: string, page: string): Promise<Word[]> {
     try {
       const response = await fetch(`https://rslang-leanwords.herokuapp.com/words?page=${page}&group=${level}`);
-      SprintService.wordCollection = await response.json();
+      const words: Word[] = await response.json();
+      return words;
     } catch (error) {
       throw new Error(`Something went wrong... ${error}`);
     }
   }
 
-  async getAggregatedWords(level: string, page: string, id: string, token: string): Promise<void> {
+  async getAggregatedWords(level: string, page: string, id: string, token: string): Promise<Word[]> {
     const url = `https://rslang-leanwords.herokuapp.com/users/${id}/aggregatedWords?page=${page}&group=${level}`;
     try {
-      const response = await fetch(url, {
+      const response: Response = await fetch(url, {
+        method: 'GET',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
         }
       });
       if (response.status === 401) throw new Error('Access token is missing or invalid');
-      SprintService.wordCollection = await response.json();
+      const res = await response.json();
+      return res[0].paginatedResults;
     } catch (error) {
       throw new Error(`Something went wrong... ${error}`);
     }
@@ -41,8 +45,9 @@ export default class SprintService {
       const response = await fetch(url, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });

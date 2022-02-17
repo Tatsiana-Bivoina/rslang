@@ -1,11 +1,15 @@
-import { Word, WordStatistic } from './abstracts';
+import { Word, GameResult, UserChoiseOptional, GameStatistic } from './abstracts';
 import SprintService from './SprintService';
 import SprintView from './SprintView';
+import { drawPage } from '../app';
+import { mainView } from '../main/view';
+import { UserData } from '../authorization/storage';
 
 export default class SprintController {
   sprintService: SprintService;
 
   sprintView: SprintView;
+  userData: UserData;
 
   rand: number;
 
@@ -13,7 +17,7 @@ export default class SprintController {
 
   translationArr: string[];
 
-  wordStatistic: WordStatistic[];
+  wordStatistic: GameResult[];
 
   index: number;
 
@@ -31,6 +35,10 @@ export default class SprintController {
 
   page: string;
 
+  userId: string;
+
+  token: string;
+
   constructor() {
     this.sprintService = new SprintService();
     this.sprintView = new SprintView();
@@ -46,6 +54,15 @@ export default class SprintController {
     this.checkboxCount = 0;
     this.level = '';
     this.page = '';
+    this.userData = new UserData();
+    this.userId = '';
+    this.token = '';
+    this.getUserData();
+  }
+
+  private async getUserData(): Promise<void> {
+    this.token = await this.userData.getToken();
+    this.userId = this.userData.userId;
   }
 
   async toggleFullScreen(): Promise<void> {
@@ -72,7 +89,7 @@ export default class SprintController {
         if (btnStart) this.addActiveClass(btn, btnStart);
         this.level = (Number(btn.textContent) - 1).toString();
         this.page = Math.floor(this.getRandomNumber()).toString();
-        await this.sprintService.getWords(this.level, this.page);
+        await this.getWordsCollection();
       }
       if (btn.classList.contains('btn-start')) {
         this.startGame();
@@ -80,6 +97,31 @@ export default class SprintController {
     });
   }
 
+  async getWordsCollection(): Promise<void> {
+    if (this.userId !== '') {
+      SprintService.wordCollection = await this.sprintService.getAggregatedWords(
+        this.level,
+        this.page,
+        this.userId,
+        this.token
+      );
+      if (SprintService.wordCollection.length < 20) {
+        this.page = Math.floor(this.getRandomNumber()).toString();
+        const response = await this.sprintService.getAggregatedWords(this.level, this.page, this.userId, this.token);
+        SprintService.wordCollection = SprintService.wordCollection.concat(response);
+      }
+    } else {
+      SprintService.wordCollection = await this.sprintService.getWords(this.level, this.page);
+    }
+  }
+
+  async closeGame(): Promise<void> {
+    const btnExit: Element | null = document.querySelector('.btn-exit');
+    btnExit?.addEventListener('click', async () => {
+      await drawPage(mainView);
+    });
+  }
+  
   private addActiveClass(pressedBtn: HTMLElement, btnStart: HTMLElement): void {
     const levelBtns: NodeListOf<Element> = document.querySelectorAll('.btn-level');
     levelBtns.forEach((el) => {
@@ -133,7 +175,7 @@ export default class SprintController {
   private generateRandomIndexes(): number[] {
     const randomIndex: number[] = [];
     for (let i = 0; i < 9; i++) {
-      const randEl = Math.round(Math.random() * 19);
+      const randEl = Math.round(Math.random() * (this.wordsArr.length - 1));
       if (randomIndex.includes(randEl)) {
         i--;
         continue;
@@ -313,8 +355,7 @@ export default class SprintController {
   }
 
   // Statistic
-
-  private updateStatisticPage(wordStatistic: WordStatistic[], totalPoints: number): void {
+  private updateStatisticPage(wordStatistic: GameResult[], totalPoints: number): void {
     const pointsTitle: Element | null = document.querySelector('.total-points-title');
     if (pointsTitle) {
       pointsTitle.innerHTML = `Набрано ${totalPoints} очков.`;
@@ -322,13 +363,14 @@ export default class SprintController {
     this.generateWrongWordsList(wordStatistic);
     this.generateWrightWordsList(wordStatistic);
     this.addListenetToBtnRestart();
+    this.addListenerToBtnLeave();
   }
 
-  private generateWrongWordsList(wordStatistic: WordStatistic[]): void {
+  private generateWrongWordsList(wordStatistic: GameResult[]): void {
     const mistakesList: Element | null = document.querySelector('.mistakes-list');
     const mistakesTitle: Element | null = document.querySelector('.mistakes-title span');
 
-    const wrongWords: WordStatistic[] = wordStatistic.filter((el) => el.isRight === false);
+    const wrongWords: GameResult[] = wordStatistic.filter((el) => el.isRight === false);
     if (mistakesList && mistakesTitle) {
       mistakesTitle.innerHTML = `${wrongWords.length}`;
       mistakesList.appendChild(this.createItems(wrongWords));
@@ -337,11 +379,11 @@ export default class SprintController {
     this.addListenerToBtnSound(soundBtns, wrongWords);
   }
 
-  private generateWrightWordsList(wordStatistic: WordStatistic[]): void {
+  private generateWrightWordsList(wordStatistic: GameResult[]): void {
     const correctsList: Element | null = document.querySelector('.correct-list');
     const correctsTitle: Element | null = document.querySelector('.correct-title span');
 
-    const wrightWords: WordStatistic[] = wordStatistic.filter((el) => el.isRight === true);
+    const wrightWords: GameResult[] = wordStatistic.filter((el) => el.isRight === true);
 
     if (correctsList && correctsTitle) {
       correctsTitle.innerHTML = `${wrightWords.length}`;
@@ -351,7 +393,7 @@ export default class SprintController {
     this.addListenerToBtnSound(soundBtns, wrightWords);
   }
 
-  private createItems(wordsArr: WordStatistic[]): DocumentFragment {
+  private createItems(wordsArr: GameResult[]): DocumentFragment {
     const fragment: DocumentFragment = document.createDocumentFragment();
 
     wordsArr.forEach((el) => {
@@ -368,7 +410,7 @@ export default class SprintController {
     return fragment;
   }
 
-  private addListenerToBtnSound(soundBtns: NodeListOf<Element>, wordsArr: WordStatistic[]): void {
+  private addListenerToBtnSound(soundBtns: NodeListOf<Element>, wordsArr: GameResult[]): void {
     soundBtns.forEach((el, index) => {
       el.addEventListener('click', () => {
         const audio = new Audio(`https://rslang-leanwords.herokuapp.com/${wordsArr[index].audio}`);
@@ -381,8 +423,7 @@ export default class SprintController {
     const btnRestart: Element | null = document.querySelector('.btn-restart');
     if (btnRestart) {
       btnRestart.addEventListener('click', async () => {
-        this.page = Math.floor(this.getRandomNumber()).toString();
-        await this.sprintService.getWords(this.level, this.page);
+        await this.getWordsCollection();
         this.index = 0;
         this.pressedBtn = '';
         this.counter = 0;
@@ -390,7 +431,17 @@ export default class SprintController {
         this.totalPoints = 0;
         this.checkboxCount = 0;
         this.wordStatistic = [];
+        this.wordsArr = [];
+        this.translationArr = [];
         this.startGame();
+      });
+    }
+  }
+  addListenerToBtnLeave() {
+    const btnLeave: Element | null = document.querySelector('.btn-leave');
+    if (btnLeave) {
+      btnLeave.addEventListener('click', async () => {
+        await drawPage(mainView);
       });
     }
   }

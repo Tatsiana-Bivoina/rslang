@@ -1,6 +1,10 @@
 {
   "dependencies": {
-    "create-rss-app": "^0.2.4"
+    "cloudinary": "^1.28.1",
+    "create-rss-app": "^0.2.4",
+    "dotenv": "^16.0.0",
+    "express": "^4.17.2",
+    "multer": "^1.4.4"
   },
   "name": "rslang",
   "scripts": {
