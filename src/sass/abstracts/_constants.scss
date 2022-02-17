@@ -1,13 +1,11 @@
-$color-primary: #1943ef;
+$color-primary: #3f51b5;
 $color-primary-darker: darken($color-primary, 10%);
 $color-primary-lighter: lighten($color-primary, 10%);
-
-$color-light: #cbd5e0;
 
 $color-font: #ffffff;
 $color-font-darker: darken($color-font, 10%);
 
-$color-form-bg: #f1f1f1;
-$color-form-bg-darker: darken($color-form-bg, 10%);
+$color-light: #f1f1f1;
+$color-light-darker: darken($color-light, 10%);
 
 $border-radius: 5px;
