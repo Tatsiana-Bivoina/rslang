@@ -1,0 +1,141 @@
+$light-grey: rgb(235, 235, 235);
+$color-form-bg-darker: #ddd;
+
+.book-page-wrapper {
+  height: calc(100vh - 60px);
+  width: 100vw;
+  background-image: url('../images/backs/20.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  .book-page {
+    background-color: $light-grey;
+    margin: auto;
+    height: calc(100vh - 60px);
+    width: 90vw;
+    display: flex;
+    .nav-group {
+      border-right: rgb(219, 144, 144) 1px solid;
+      box-shadow: rgb(219, 144, 144) 0px 2px 8px;
+      height: 100%;
+      // width: 30%;
+      .nav-item {
+        color: rgb(87, 87, 87);
+        padding: 15px;
+        background-color: $light-grey;
+        text-align: center;
+      }
+    }
+    .words {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      overflow: scroll;
+      color: rgb(78, 78, 78);
+      .word-card {
+        border-radius: 50%;
+        width: 90%;
+        // height: 45vh;
+        margin: 20px 25px;
+        display: flex;
+        position: relative;
+        .word-image {
+          position: relative;
+          margin: auto;
+          margin-right: 10px;
+          border-radius: 50%;
+          width: 200px;
+          height: 180px;
+          background-size: cover;
+          background-position: center;
+          background-repeat: no-repeat;
+        }
+        .shadow {
+          font-size: 22px;
+          width: inherit;
+        }
+        .about-word{
+          padding: 15px;
+          display: flex;
+          justify-content: space-around;
+          align-items: center;
+          .book-word{
+            font-size: 30px;
+            font-weight: 600;
+          }
+          .translate{
+            font-weight: 600;
+          }
+        }
+        .description{
+          display: flex;
+        }
+        .english-part,
+        .russian-part {
+          padding: 10px;
+          // text-align: center;
+        }
+        .word-buttons{
+          margin: auto;
+        }
+        .difficulty,
+        .learned{
+          margin-bottom: 10px;
+          width: fit-content;
+          height: fit-content;
+          padding: 5px 7px;
+          background-color: $color-header-bg;
+          border-radius: 5%;
+          color: #ebebeb;
+        }
+        .learned{
+          background-color: rgb(87, 87, 87);
+        }
+        .hard-word,
+        .learned-word{
+          background-color: rgb(139, 139, 139);
+        }
+      }
+    }
+  }
+  .pagination-page{
+    display: flex;
+    margin: auto;
+    width: 20vw;
+    justify-content: space-between;
+    font-size: 24px;
+    .pag-but {
+      background-image: url('../images/png/double-arrowL.png');
+      background-size: contain;
+      width: 20px;
+      height: 20px;
+      background-position: center;
+    }
+    .left-arrow {
+      background-image: url('../images/png/arrowL.png');
+    }
+    .right-arrow {
+      background-image: url('../images/png/arrowR.png');
+    }
+    .double-right-arrow {
+      background-image: url('../images/png/double-arrowR.png');
+    }
+  }
+}
+
+
+.translate {
+}
+.transcription {
+}
+.meaning-en {
+}
+.example-en {
+}
+.meaning-ru {
+}
+.example-ru {
+}
+.nav-page {
+}
