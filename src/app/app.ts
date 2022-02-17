@@ -25,7 +25,6 @@ export class App {
       <span class="menu login">${Menu.login}</span>
     `;
 
-
     // отрисовка футера
     const footer: HTMLDivElement = document.createElement('footer') as HTMLDivElement;
     footer.classList.add('footer');

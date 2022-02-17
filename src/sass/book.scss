@@ -55,20 +55,20 @@ $color-form-bg-darker: #ddd;
           font-size: 22px;
           width: inherit;
         }
-        .about-word{
+        .about-word {
           padding: 15px;
           display: flex;
           justify-content: space-around;
           align-items: center;
-          .book-word{
+          .book-word {
             font-size: 30px;
             font-weight: 600;
           }
-          .translate{
+          .translate {
             font-weight: 600;
           }
         }
-        .description{
+        .description {
           display: flex;
         }
         .english-part,
@@ -76,30 +76,30 @@ $color-form-bg-darker: #ddd;
           padding: 10px;
           // text-align: center;
         }
-        .word-buttons{
+        .word-buttons {
           margin: auto;
         }
         .difficulty,
-        .learned{
+        .learned {
           margin-bottom: 10px;
           width: fit-content;
           height: fit-content;
           padding: 5px 7px;
-          background-color: $color-header-bg;
+          background-color: $color-primary;
           border-radius: 5%;
           color: #ebebeb;
         }
-        .learned{
+        .learned {
           background-color: rgb(87, 87, 87);
         }
         .hard-word,
-        .learned-word{
+        .learned-word {
           background-color: rgb(139, 139, 139);
         }
       }
     }
   }
-  .pagination-page{
+  .pagination-page {
     display: flex;
     margin: auto;
     width: 20vw;
@@ -123,7 +123,6 @@ $color-form-bg-darker: #ddd;
     }
   }
 }
-
 
 .translate {
 }
