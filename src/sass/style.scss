@@ -1,5 +1,7 @@
 // abstracts
 @import './abstracts/constants';
+@import './abstracts/mixins';
+@import './abstracts/placeholders';
 
 // base
 @import './base/base';
@@ -7,3 +9,6 @@
 // components
 @import './components/header';
 @import './components/form';
+@import './components/page';
+@import './components/footer';
+@import './components/teamcard';

@@ -5,6 +5,7 @@ export enum Menu {
   audioCall = 'Аудиовызов',
   command = 'Команда',
   statistic = 'Статистика',
+  team = 'Команда',
   login = 'Вход'
 }
 

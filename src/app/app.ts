@@ -6,6 +6,7 @@ import SprintView from './sprint-game/SprintView';
 import SprintController from './sprint-game/SprintController';
 import { Menu } from './abstracts';
 import { drawUserInfo } from './authorization/controller';
+import { teamView } from './team/view';
 
 export class App {
   async start() {
@@ -24,11 +25,28 @@ export class App {
       <span class="menu login">${Menu.login}</span>
     `;
 
+    // отрисовка футера
+    const footer: HTMLDivElement = document.createElement('footer') as HTMLDivElement;
+    footer.classList.add('footer');
+    footer.innerHTML = `
+    <div class="footer-wrapper">      
+      <p class="year">© 2022</p>
+      <div class="footer-info">        
+        <a href="https://github.com/Tatsiana-Bivoina" class="github-user" target="_blank" rel="noopener">@Tatsiana-Bivoina</a>
+        <a href="https://github.com/katesoo" class="github-user" target="_blank" rel="noopener">@katesoo</a>
+        <a href="https://github.com/vostavhy" class="github-user" target="_blank" rel="noopener">@vostavhy</a>
+      </div>
+      <a href="https://rs.school/" class="rss-logo" target="_blank" rel="noopener"></a>
+    </div>    
+    `;
+
+    // отрисовка содержимого страницы
     const main: HTMLDivElement = document.createElement('main') as HTMLDivElement;
     main.classList.add('page');
 
     body.append(header);
     body.append(main);
+    body.append(footer);
 
     // отрисовка первоначального контента
     await drawPage(mainView);
@@ -55,6 +73,9 @@ export class App {
           break;
         case Menu.dictionary:
           await drawPage(dictionaryView);
+          break;
+        case Menu.team:
+          await drawPage(teamView);
           break;
         case Menu.login:
           await drawPage(loginView);
