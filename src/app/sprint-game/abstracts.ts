@@ -15,7 +15,7 @@ export type Word = {
   textExampleTranslate: string;
 };
 
-export type WordStatistic = {
+export type GameResult = {
   word: string;
   audio: string;
   transcription: string;
@@ -26,4 +26,11 @@ export type WordStatistic = {
 export type UserChoiseOptional = {
   correctCount: number;
   errorCount: number;
+};
+
+export type GameStatistic = {
+  gameName: string;
+  wordsTrueId: string[];
+  wordsFalseId: string[];
+  score: number;
 };

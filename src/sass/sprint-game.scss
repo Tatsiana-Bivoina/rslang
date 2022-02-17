@@ -16,7 +16,7 @@ body {
 
 .page__sprint {
   width: inherit;
-  height: 97vh;
+  height: calc(100vh - 60px);
   background-image: url('../images/sprint-game/sprint-bg.jpg');
   background-position: center;
   background-repeat: no-repeat;
@@ -305,6 +305,7 @@ body {
 .items {
   width: 100%;
   display: flex;
+  flex-wrap: wrap;
   position: relative;
   box-sizing: border-box;
   text-align: left;
@@ -320,6 +321,7 @@ body {
 }
 
 .item-btn {
+  flex-shrink: 0;
   width: 35px;
   height: 30px;
   margin: 0;
