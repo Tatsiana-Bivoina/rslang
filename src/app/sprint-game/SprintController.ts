@@ -1,4 +1,4 @@
-import { Word, GameResult, UserChoiseOptional, GameStatistic } from './abstracts';
+import { Word, GameResult, UserChoiseOptional, GameStatistic, ParametersSendWord } from './abstracts';
 import SprintService from './SprintService';
 import SprintView from './SprintView';
 import { drawPage } from '../app';
@@ -9,6 +9,7 @@ export default class SprintController {
   sprintService: SprintService;
 
   sprintView: SprintView;
+
   userData: UserData;
 
   rand: number;
@@ -17,7 +18,7 @@ export default class SprintController {
 
   translationArr: string[];
 
-  wordStatistic: GameResult[];
+  gameResults: GameResult[];
 
   index: number;
 
@@ -39,13 +40,15 @@ export default class SprintController {
 
   token: string;
 
+  userChoiseOptional: UserChoiseOptional;
+
   constructor() {
     this.sprintService = new SprintService();
     this.sprintView = new SprintView();
     this.rand = 0;
     this.wordsArr = [];
     this.translationArr = [];
-    this.wordStatistic = [];
+    this.gameResults = [];
     this.index = 0;
     this.pressedBtn = '';
     this.counter = 0;
@@ -57,6 +60,11 @@ export default class SprintController {
     this.userData = new UserData();
     this.userId = '';
     this.token = '';
+    this.userChoiseOptional = {
+      wordId: '',
+      correctCount: 0,
+      errorCount: 0
+    };
     this.getUserData();
   }
 
@@ -85,11 +93,11 @@ export default class SprintController {
     btnsBlock?.addEventListener('click', async (ev) => {
       const btn = ev.target as HTMLElement;
       if (btn.classList.contains('btn-level')) {
-        btnStart?.removeAttribute('disabled');
         if (btnStart) this.addActiveClass(btn, btnStart);
         this.level = (Number(btn.textContent) - 1).toString();
         this.page = Math.floor(this.getRandomNumber()).toString();
         await this.getWordsCollection();
+        btnStart?.removeAttribute('disabled');
       }
       if (btn.classList.contains('btn-start')) {
         this.startGame();
@@ -121,7 +129,7 @@ export default class SprintController {
       await drawPage(mainView);
     });
   }
-  
+
   private addActiveClass(pressedBtn: HTMLElement, btnStart: HTMLElement): void {
     const levelBtns: NodeListOf<Element> = document.querySelectorAll('.btn-level');
     levelBtns.forEach((el) => {
@@ -167,7 +175,7 @@ export default class SprintController {
       if (seconds < 0 || this.index === SprintService.wordCollection.length) {
         clearInterval(intervalId);
         this.sprintView.sprintStatisticView();
-        this.updateStatisticPage(this.wordStatistic, this.totalPoints);
+        this.updateStatisticPage(this.gameResults, this.totalPoints);
       }
     }, 1000);
   }
@@ -250,32 +258,69 @@ export default class SprintController {
     });
   }
 
-  private nextWord(): void {
+  private async nextWord(): Promise<void> {
     const isRight: boolean = this.checkIfTranslationRight();
     const checkboxes: NodeListOf<Element> = document.querySelectorAll('.checkbox');
+    const parameters: ParametersSendWord = {
+      userId: this.userId,
+      wordId: this.userChoiseOptional.wordId,
+      token: this.token,
+      optional: this.userChoiseOptional,
+      methodHttp: 'POST'
+    };
+
     if (isRight) {
-      const audioWright: HTMLAudioElement = new Audio('../images/sprint-game/audio/wright.mp3');
-      audioWright.play();
-      this.counter += 1;
-      this.checkboxCount += 1;
-      if (this.checkboxCount > 3) {
-        this.revokeCheckboxColor(checkboxes);
-        this.checkboxCount = 0;
-      } else {
-        this.paitCheckbox(checkboxes);
-      }
-      this.changeBonusPrice();
-      this.countTotalPoints();
+      this.chooseWrightWord(checkboxes);
+      this.userChoiseOptional.correctCount = 1;
     } else {
-      const audioWrong: HTMLAudioElement = new Audio('../images/sprint-game/audio/wrong.mp3');
-      audioWrong.play();
-      this.counter = 0;
-      this.checkboxCount = 0;
-      this.revokeCheckboxColor(checkboxes);
-      this.changeBonusPrice();
+      this.chooseWrongWord(checkboxes);
+      this.userChoiseOptional.errorCount = 1;
     }
+
+    if (SprintService.wordCollection[this.index].userWord) {
+      const correctCount: number | undefined = SprintService.wordCollection[this.index].userWord?.optional.correctCount;
+      const errorCount: number | undefined = SprintService.wordCollection[this.index].userWord?.optional.errorCount;
+      if (typeof correctCount !== 'undefined' && typeof errorCount !== 'undefined') {
+        this.userChoiseOptional.correctCount += correctCount;
+        this.userChoiseOptional.errorCount += errorCount;
+      }
+      parameters.methodHttp = 'PUT';
+    }
+
     this.index += 1;
+    await this.sprintService.sendUserWord(parameters);
     this.updateWordContainer();
+    this.userChoiseOptional = {
+      wordId: '',
+      correctCount: 0,
+      errorCount: 0
+    };
+  }
+
+  private chooseWrightWord(checkboxes: NodeListOf<Element>) {
+    const audioWright: HTMLAudioElement = new Audio('../images/sprint-game/audio/wright.mp3');
+    audioWright.play();
+    this.counter += 1;
+    this.checkboxCount += 1;
+    if (this.checkboxCount > 3) {
+      this.revokeCheckboxColor(checkboxes);
+      this.checkboxCount = 0;
+    } else {
+      this.paitCheckbox(checkboxes);
+    }
+    this.changeBonusPrice();
+    this.countTotalPoints();
+    this.userChoiseOptional.correctCount = 1;
+  }
+
+  private chooseWrongWord(checkboxes: NodeListOf<Element>) {
+    const audioWrong: HTMLAudioElement = new Audio('../images/sprint-game/audio/wrong.mp3');
+    audioWrong.play();
+    this.counter = 0;
+    this.checkboxCount = 0;
+    this.revokeCheckboxColor(checkboxes);
+    this.changeBonusPrice();
+    this.userChoiseOptional.errorCount = 1;
   }
 
   private checkIfTranslationRight(): boolean {
@@ -295,7 +340,10 @@ export default class SprintController {
     if (word[0].wordTranslate !== currentTranslation && this.pressedBtn === 'btnFalse') {
       wordInfo.isRight = true;
     }
-    this.wordStatistic.push(wordInfo);
+    this.gameResults.push(wordInfo);
+    if (word[0]._id) {
+      this.userChoiseOptional.wordId = word[0]._id;
+    }
     return wordInfo.isRight;
   }
 
@@ -430,7 +478,7 @@ export default class SprintController {
         this.price = 10;
         this.totalPoints = 0;
         this.checkboxCount = 0;
-        this.wordStatistic = [];
+        this.gameResults = [];
         this.wordsArr = [];
         this.translationArr = [];
         this.startGame();

@@ -1,4 +1,4 @@
-import { UserChoiseOptional, Word } from './abstracts';
+import { ParametersSendWord, UserChoiseOptional, Word } from './abstracts';
 
 export default class SprintService {
   static wordCollection: Word[] = [];
@@ -32,20 +32,21 @@ export default class SprintService {
     }
   }
 
-  async postUserWord(id: string, wordId: string, token: string, optional: UserChoiseOptional): Promise<void> {
-    const url = `https://rslang-leanwords.herokuapp.com/users/${id}/words/${wordId}`;
+  async sendUserWord(parameters: ParametersSendWord): Promise<void> {
+    const url = `https://rslang-leanwords.herokuapp.com/users/${parameters.userId}/words/${parameters.wordId}`;
     const data = {
-      difficulty: 'work',
+      difficulty: 'easy',
       optional: {
-        correctCount: optional.correctCount,
-        errorCount: optional.errorCount
+        id: parameters.wordId,
+        correctCount: parameters.optional.correctCount,
+        errorCount: parameters.optional.errorCount
       }
     };
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: parameters.methodHttp,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${parameters.token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
