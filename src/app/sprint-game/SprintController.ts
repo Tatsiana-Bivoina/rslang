@@ -1,4 +1,12 @@
-import { Word, GameResult, UserChoiseOptional, GameStatistic, ParametersSendWord } from './abstracts';
+import {
+  Word,
+  GameResult,
+  UserChoiseOptional,
+  GameStatistic,
+  ParametersSendWord,
+  ParametersGetStatistics,
+  ParametersPutStatistics
+} from './abstracts';
 import SprintService from './SprintService';
 import SprintView from './SprintView';
 import { drawPage } from '../app';
@@ -42,6 +50,19 @@ export default class SprintController {
 
   userChoiseOptional: UserChoiseOptional;
 
+  static gameStatistic: ParametersPutStatistics = {
+    learnedWords: 0,
+    optional: {
+      statistics: []
+    }
+  };
+
+  statistics: GameStatistic;
+
+  seriesTrueAnswers: number;
+
+  counterTrueAnswers: number;
+
   constructor() {
     this.sprintService = new SprintService();
     this.sprintView = new SprintView();
@@ -65,12 +86,36 @@ export default class SprintController {
       correctCount: 0,
       errorCount: 0
     };
+    this.statistics = {
+      gameName: '',
+      wordsTrueId: [],
+      wordsFalseId: [],
+      score: 0,
+      seriesTrueAnswers: 0,
+      learnedWords: []
+    };
+    this.seriesTrueAnswers = 0;
+    this.counterTrueAnswers = 0;
     this.getUserData();
   }
 
   private async getUserData(): Promise<void> {
-    this.token = await this.userData.getToken();
     this.userId = this.userData.userId;
+    if (this.userId !== '') {
+      this.token = await this.userData.getToken();
+      await this.getStatistics();
+    }
+  }
+
+  async getStatistics(): Promise<void> {
+    const response: ParametersGetStatistics | undefined = await this.sprintService.getStatistic(
+      this.userId,
+      this.token
+    );
+    if (typeof response !== 'undefined') {
+      SprintController.gameStatistic.learnedWords = response.learnedWords;
+      SprintController.gameStatistic.optional.statistics = JSON.parse(response.optional.statistics);
+    }
   }
 
   async toggleFullScreen(): Promise<void> {
@@ -118,6 +163,7 @@ export default class SprintController {
         const response = await this.sprintService.getAggregatedWords(this.level, this.page, this.userId, this.token);
         SprintService.wordCollection = SprintService.wordCollection.concat(response);
       }
+      console.log(SprintService.wordCollection);
     } else {
       SprintService.wordCollection = await this.sprintService.getWords(this.level, this.page);
     }
@@ -146,6 +192,7 @@ export default class SprintController {
   }
 
   startGame(): void {
+    this.statistics.gameName = 'sprint-game';
     this.sprintView.sprintGameView();
     this.createWordsArr();
     this.addListenerToBtnTrue();
@@ -268,13 +315,34 @@ export default class SprintController {
       optional: this.userChoiseOptional,
       methodHttp: 'POST'
     };
-
-    if (isRight) {
+    let currentWordId: string | undefined = '';
+    if (this.userId !== '') {
+      currentWordId = SprintService.wordCollection[this.index]._id;
+    } else {
+      currentWordId = SprintService.wordCollection[this.index].id;
+    }
+    if (isRight && typeof currentWordId !== 'undefined') {
       this.chooseWrightWord(checkboxes);
       this.userChoiseOptional.correctCount = 1;
+      this.statistics.wordsTrueId.push(currentWordId);
+      if (!this.statistics.learnedWords.includes(currentWordId)) {
+        this.statistics.learnedWords.push(currentWordId);
+      }
+      this.counterTrueAnswers += 1;
     } else {
       this.chooseWrongWord(checkboxes);
       this.userChoiseOptional.errorCount = 1;
+      if (typeof currentWordId !== 'undefined') {
+        this.statistics.wordsFalseId.push(currentWordId);
+        if (this.statistics.learnedWords.includes(currentWordId)) {
+          const currentWordIndex: number = this.statistics.learnedWords.indexOf(currentWordId);
+          this.statistics.learnedWords.splice(currentWordIndex, 1);
+        }
+      }
+      if (this.seriesTrueAnswers < this.counterTrueAnswers) {
+        this.seriesTrueAnswers = this.counterTrueAnswers;
+        this.counterTrueAnswers = 0;
+      }
     }
 
     if (SprintService.wordCollection[this.index].userWord) {
@@ -286,10 +354,11 @@ export default class SprintController {
       }
       parameters.methodHttp = 'PUT';
     }
-
     this.index += 1;
-    await this.sprintService.sendUserWord(parameters);
     this.updateWordContainer();
+    if (this.userId !== '') {
+      await this.sprintService.sendUserWord(parameters);
+    }
     this.userChoiseOptional = {
       wordId: '',
       correctCount: 0,
@@ -403,15 +472,35 @@ export default class SprintController {
   }
 
   // Statistic
-  private updateStatisticPage(wordStatistic: GameResult[], totalPoints: number): void {
+
+  private async updateStatisticPage(wordStatistic: GameResult[], totalPoints: number): Promise<void> {
+    console.log(this.statistics.learnedWords);
     const pointsTitle: Element | null = document.querySelector('.total-points-title');
     if (pointsTitle) {
       pointsTitle.innerHTML = `Набрано ${totalPoints} очков.`;
     }
+    this.statistics.score = totalPoints;
+    this.statistics.seriesTrueAnswers = this.seriesTrueAnswers;
+
+    if (this.userId !== '') {
+      SprintController.gameStatistic.optional.statistics.push(this.statistics);
+      SprintController.gameStatistic.learnedWords = this.statistics.learnedWords.length;
+
+      await this.sprintService.putStatistics(this.userId, this.token, SprintController.gameStatistic);
+    }
+
     this.generateWrongWordsList(wordStatistic);
     this.generateWrightWordsList(wordStatistic);
     this.addListenetToBtnRestart();
     this.addListenerToBtnLeave();
+    this.statistics = {
+      gameName: '',
+      wordsTrueId: [],
+      wordsFalseId: [],
+      score: 0,
+      seriesTrueAnswers: 0,
+      learnedWords: []
+    };
   }
 
   private generateWrongWordsList(wordStatistic: GameResult[]): void {

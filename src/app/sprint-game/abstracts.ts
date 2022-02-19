@@ -36,6 +36,12 @@ export type GameStatistic = {
   wordsTrueId: string[];
   wordsFalseId: string[];
   score: number;
+  seriesTrueAnswers: number;
+  learnedWords: string[];
+};
+
+export type Statistics = {
+  statistics: GameStatistic[];
 };
 
 export type ParametersSendWord = {
@@ -44,4 +50,17 @@ export type ParametersSendWord = {
   token: string;
   optional: UserChoiseOptional;
   methodHttp: string;
+};
+
+export type ParametersPutStatistics = {
+  learnedWords: number;
+  optional: Statistics;
+};
+
+export type ParametersGetStatistics = {
+  id: string;
+  learnedWords: number;
+  optional: {
+    statistics: string;
+  };
 };
