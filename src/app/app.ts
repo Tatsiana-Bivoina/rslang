@@ -70,6 +70,7 @@ export class App {
           await drawPage(sprint.sprintView);
           await sprintController.toggleFullScreen();
           await sprintController.chooseLevel();
+          await sprintController.closeGame();
           break;
         case Menu.dictionary:
           await drawPage(dictionaryView);
