@@ -19,4 +19,5 @@ html {
 body {
   @extend %font-prime;
   @include font($size: 1.6rem, $height: 2.6rem);
+  overflow-x: hidden;
 }
