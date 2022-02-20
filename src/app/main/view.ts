@@ -18,19 +18,19 @@ export async function mainView(): Promise<HTMLDivElement> {
       <div class="wrapper wrapper-advantages">
         <h1 class="section__title">Наши преимущества</h1>
         <div class="advantages">
-          <div class="advantage">
+          <div class="advantage advantage-dictionary">
             <h3 class="advantage__title">Электронный учебник</h3>
             <p class="advantage__text">Авторизованный пользователь может добавлять сложные слова в словарь</p>
           </div>
-          <div class="advantage">
+          <div class="advantage advantage-sprint">
             <h3 class="advantage__title">Игра сприт</h3>
             <p class="advantage__text">Попробуй вспонить правильный перевод слова!</p>
           </div>
-          <div class="advantage">
+          <div class="advantage advantage-audio-call">
             <h3 class="advantage__title">Игра аудиовызов</h3>
             <p class="advantage__text">Попробуй на слух правильно составить приложение!</p>
           </div>
-          <div class="advantage">
+          <div class="advantage advantage-statistic">
             <h3 class="advantage__title">Статистика</h3>
             <p class="advantage__text">Авторизованный пользователь может просматривать свою статистику по изученным словам</p>
           </div>
