@@ -1,9 +1,8 @@
-import { playSound, getWords, questionWords, getUsersWords } from './startGame';
+import { playSound, getWords, questionWords } from './startGame';
 import { compareAnswer } from './compareAnswers';
 import { timer, stopTimer } from './timer';
 
 export async function audioCallView(): Promise<HTMLDivElement> {
-  // (document.querySelector('.buttons') as HTMLDivElement).style.display = 'none';
   let page: HTMLDivElement;
   if (document.querySelector('.page__audio-call')) {
     page = document.querySelector('.page__audio-call')!;
@@ -47,9 +46,22 @@ function listenerLevel(): void {
 }
 
 export function renderRound(): void {
-  const wrapperAudioPlay = document.querySelector('.audio-call-play-wrapper') as HTMLElement;
-  const wrapperAudioEnd = document.querySelector('.page-end-audio') as HTMLElement;
-  const wrapperAudioStart = document.querySelector('.page-audio-call-start-wrapper') as HTMLElement;
+  let page: HTMLDivElement;
+  let wrapper: HTMLDivElement | null = document.querySelector('.page-end-audio');
+  if (!document.querySelector('.page__audio-call')) {
+    document.querySelector('.page')!.innerHTML = ``;
+    page = document.createElement('div');
+    page.classList.add('page__audio-call');
+    page.innerHTML = `<div class="audio-call-play-wrapper">
+  </div>
+  <div class="page-audio-call-start-wrapper" style="opacity: 1">
+  </div>`;
+    document.querySelector('.page')?.appendChild(page);
+    wrapper = document.querySelector('.page-audio-call-start-wrapper');
+  }
+  const wrapperAudioPlay = document.querySelector('.audio-call-play-wrapper') as HTMLDivElement;
+  const wrapperAudioEnd = document.querySelector('.page-end-audio') as HTMLDivElement;
+  const wrapperAudioStart = document.querySelector('.page-audio-call-start-wrapper') as HTMLDivElement;
   if (questionWords.length === 4) {
     questionWords.sort(() => Math.round(Math.random() * 100) - 50);
     wrapperAudioPlay.innerHTML = `<div class="audio-call-play">
@@ -74,11 +86,16 @@ export function renderRound(): void {
     </div>
   </div>`;
     listener();
-    timer(3000);
-    const wrapper = wrapperAudioStart.style.opacity == '1' ? wrapperAudioStart : wrapperAudioEnd;
-    wrapper.style.opacity = '0';
-    wrapper.addEventListener('transitionend', () => {
-      wrapper.style.display = 'none';
+    timer(30);
+    if (wrapper !== document.querySelector('.page-audio-call-start-wrapper')) {
+      wrapper = wrapperAudioStart.style.opacity == '1' ? wrapperAudioStart : wrapperAudioEnd;
+    }
+    setTimeout(() => {
+      wrapper!.style.opacity = '0';
+    }, 500);
+    wrapper!.addEventListener('transitionend', () => {
+      console.log('trEnd');
+      wrapper!.style.display = 'none';
       wrapperAudioPlay.style.opacity = '1';
       wrapperAudioPlay.style.display = 'block';
     });
@@ -96,7 +113,7 @@ export function renderQuestion(): void {
   <div class="answer">${questionWords[2].wordTranslate}</div>
   <div class="answer">${questionWords[3].wordTranslate}</div>`;
   i = -1;
-  timer(3000);
+  timer(30);
 }
 
 function listener() {

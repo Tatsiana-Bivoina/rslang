@@ -121,7 +121,6 @@ export default class SprintController {
       await drawPage(mainView);
     });
   }
-  
   private addActiveClass(pressedBtn: HTMLElement, btnStart: HTMLElement): void {
     const levelBtns: NodeListOf<Element> = document.querySelectorAll('.btn-level');
     levelBtns.forEach((el) => {

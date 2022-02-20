@@ -3,19 +3,25 @@ import { staticRound } from './statis';
 import { renderQuestion, renderRound } from './view';
 import { UserData } from '../authorization/storage';
 import { score } from './compareAnswers';
+import { authorized, getHardWords, i } from '../dictionary/view';
 
 export const objectArr: Word[] = [];
 export let questionWords: Array<Word> = [];
 export let rightWord: Word;
 export let questionNum = 0;
 export let wordArr: Word[] = [];
+let randPage: number;
 
 export async function getWords(i: number, page?: number): Promise<void> {
+  console.log(page, i);
+  if (i == 6) {
+    const hardArr = (await getHardWords())[0].paginatedResults;
+    return mixArr(hardArr);
+  }
   localStorage.setItem('group', `${i}`);
   questionWords = [];
   questionNum = 0;
-  let randPage: number;
-  if (page) {
+  if (page !== undefined) {
     randPage = page;
   } else {
     randPage = getRandomNum(30);
@@ -47,15 +53,16 @@ export async function getUsersWords() {
 export async function postUserWords(word: Word, diff?: string) {
   const user = new UserData();
   const token = (await user.getToken()).toString();
+  const wordId = word.id ? word.id : word._id;
   const aboutWord = {
     difficulty: !diff ? 'easy' : `${diff}`,
     optional: {
       testFieldString: 'test',
       testFieldBoolean: true,
-      wordId: word.id
+      wordId: wordId
     }
   };
-  const rawResponse = await fetch(`https://rslang-leanwords.herokuapp.com/users/${user.userId}/words/${word.id}`, {
+  const rawResponse = await fetch(`https://rslang-leanwords.herokuapp.com/users/${user.userId}/words/${wordId}`, {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -71,6 +78,7 @@ function getRandomNum(num: number): number {
 }
 
 function mixArr(res: Word[]) {
+  console.log('startMix');
   for (let i = res.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [res[i], res[j]] = [res[j], res[i]];
@@ -82,14 +90,20 @@ export async function getOtherWords(mixedArr: Word[]): Promise<Word[] | void> {
   questionWords = [];
   wordArr = mixedArr;
   rightWord = mixedArr[questionNum];
-  const userArr: userWord[] = Array.from(await getUsersWords());
-  for (let i = 0; i < userArr.length; i++) {
-    if (userArr[i].optional.wordId == rightWord.id) {
-      questionNum++;
-      if (questionNum == 20) {
-        return staticRound(objectArr, score);
-      } else {
-        return getOtherWords(wordArr);
+  if (authorized !== false && i !== '6') {
+    const userArr: userWord[] = Array.from(await getUsersWords());
+    for (let i = 0; i < userArr.length; i++) {
+      if (userArr[i].optional.wordId == rightWord._id) {
+        questionNum++;
+        if (questionNum == 20) {
+          // if (randPage >= 1) {
+          //   randPage--;
+          //   const anotherPageWords = await getWords(i, randPage);
+          // }
+          return staticRound(objectArr, score);
+        } else {
+          return getOtherWords(wordArr);
+        }
       }
     }
   }
@@ -106,10 +120,8 @@ export async function getOtherWords(mixedArr: Word[]): Promise<Word[] | void> {
     }
   }
   if (!document.querySelector('.answers')) {
-    // console.log('renderRound');
     renderRound();
   } else {
-    // console.log('renderQuestion');
     renderQuestion();
   }
   return questionWords;

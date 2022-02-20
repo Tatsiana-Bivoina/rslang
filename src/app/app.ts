@@ -1,12 +1,13 @@
 import { audioCallView } from './audiocall-game/view';
 import { loginView } from './authorization/view';
-import { dictionaryView } from './dictionary/view';
+import { dictionaryView, i, pageNum } from './dictionary/view';
 import { mainView } from './main/view';
 import SprintView from './sprint-game/SprintView';
 import SprintController from './sprint-game/SprintController';
 import { Menu } from './abstracts';
 import { drawUserInfo } from './authorization/controller';
 import { teamView } from './team/view';
+import { getWords } from './audiocall-game/startGame';
 
 export class App {
   async start() {
@@ -62,7 +63,9 @@ export class App {
           await drawPage(mainView);
           break;
         case Menu.audioCall:
-          await drawPage(audioCallView);
+          document.querySelector('.page__dictionary')
+            ? await getWords(Number(i), pageNum)
+            : await drawPage(audioCallView);
           break;
         case Menu.sprint:
           const sprint = new SprintView();
