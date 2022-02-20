@@ -8,6 +8,7 @@ import { Menu } from './abstracts';
 import { drawUserInfo } from './authorization/controller';
 import { teamView } from './team/view';
 import StatisticView from './statistic/StatisticView';
+import StatisticController from './statistic/StatisticController';
 
 export class App {
   async start() {
@@ -83,7 +84,10 @@ export class App {
           break;
         case Menu.statistic:
           const statistic = new StatisticView();
+          const statisticController = new StatisticController();
+          await statisticController.getUserData();
           await drawPage(statistic.statisticView);
+          statisticController.updatePage();
           break;
       }
     });
