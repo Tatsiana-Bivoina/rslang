@@ -1,0 +1,42 @@
+.intro {
+  max-width: 900px;
+  padding-top: 20px;
+  &__text {
+    @include font($size: 2.5rem, $height: 2.6rem);
+    @extend %font-prime;
+    color: $color-font-additional;
+  }
+}
+
+.advantages {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 20px;
+  flex-wrap: wrap;
+  padding: 20px;
+
+  .advantage {
+    height: 180px;
+    width: 500px;
+    padding: 30px 10px;
+    background: $color-light;
+    border-radius: $border-radius;
+    box-shadow: $box-shadow;
+    @extend %transition;
+    cursor: pointer;
+    &:hover {
+      background: $color-light-darker;
+    }
+
+    &__text {
+      color: $color-font-additional;
+    }
+  }
+}
+
+.video {
+  max-width: 800px;
+  margin: 0 auto;
+  padding-top: 40px;
+}

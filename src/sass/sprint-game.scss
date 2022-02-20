@@ -9,10 +9,10 @@ body {
   margin: 0;
 }
 
-.page {
-  width: inherit;
-  height: inherit;
-}
+//.page {
+//  width: inherit;
+//  height: inherit;
+//}
 
 .page__sprint {
   width: inherit;
@@ -44,16 +44,16 @@ body {
 
 .btn-fullscreen {
   right: 40px;
-  background-image: url("../images/sprint-game/svg/fullscreen-open.svg");
+  background-image: url('../images/sprint-game/svg/fullscreen-open.svg');
 }
 
 :-webkit-full-screen .btn-fullscreen {
-  background-image: url("../images/sprint-game/svg/fullscreen-exit.svg");
+  background-image: url('../images/sprint-game/svg/fullscreen-exit.svg');
 }
 
 .btn-exit {
   left: 40px;
-  background-image: url("../images/sprint-game/svg/exit.svg");
+  background-image: url('../images/sprint-game/svg/exit.svg');
 }
 
 .main-content {
@@ -88,7 +88,7 @@ body {
   height: 50px;
   border-radius: 50%;
   border-color: #272a2a;
-  transition: .8s;
+  transition: 0.8s;
 
   &:hover {
     transform: scale(1.1);
@@ -138,7 +138,7 @@ body {
     color: $color-white;
     background-color: $color-blue;
     box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
-    transition: .8s;
+    transition: 0.8s;
 
     &:hover {
       cursor: pointer;
@@ -246,7 +246,7 @@ body {
 .total-points {
   margin-top: 0;
   font-size: 3rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 400;
   line-height: 1.167;
   letter-spacing: 0em;
@@ -260,7 +260,7 @@ body {
 
 .total-points-title {
   font-size: 1.25rem;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 500;
   line-height: 1.6;
   letter-spacing: 0.0075em;
@@ -277,7 +277,7 @@ body {
 .mistakes-title,
 .correct-title {
   color: rgba(0, 0, 0, 0.54);
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 400;
   line-height: 1.75;
   letter-spacing: 0.00938em;
@@ -354,14 +354,14 @@ body {
   padding: 6px 16px;
   font-size: 0.875rem;
   box-sizing: border-box;
-  font-family: "Roboto", "Helvetica", "Arial", sans-serif;
+  font-family: 'Roboto', 'Helvetica', 'Arial', sans-serif;
   font-weight: 600;
   line-height: 1.75;
   border-radius: 5px;
   letter-spacing: 0.02em;
   text-transform: uppercase;
   box-shadow: 0px 3px 1px -2px rgb(0 0 0 / 20%), 0px 2px 2px 0px rgb(0 0 0 / 14%), 0px 1px 5px 0px rgb(0 0 0 / 12%);
-  transition: .8s;
+  transition: 0.8s;
 
   &:hover {
     cursor: pointer;
