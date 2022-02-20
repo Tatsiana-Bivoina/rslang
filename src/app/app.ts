@@ -7,6 +7,7 @@ import SprintController from './sprint-game/SprintController';
 import { Menu } from './abstracts';
 import { drawUserInfo } from './authorization/controller';
 import { teamView } from './team/view';
+import StatisticView from './statistic/StatisticView';
 
 export class App {
   async start() {
@@ -79,6 +80,10 @@ export class App {
           break;
         case Menu.login:
           await drawPage(loginView);
+          break;
+        case Menu.statistic:
+          const statistic = new StatisticView();
+          await drawPage(statistic.statisticView);
           break;
       }
     });
