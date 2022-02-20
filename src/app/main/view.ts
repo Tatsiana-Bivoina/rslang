@@ -1,4 +1,8 @@
 export async function mainView(): Promise<HTMLDivElement> {
+  const response = await fetch('https://raw.githubusercontent.com/vostavhy/landings/dev/.links');
+  const link = await response.text();
+  console.log(link);
+
   const page: HTMLDivElement = document.createElement('div');
   page.classList.add('page__main');
   page.innerHTML = `
@@ -42,7 +46,7 @@ export async function mainView(): Promise<HTMLDivElement> {
       <div class="wrapper wrapper-video">
         <h1 class="section__title">Видеопрезентация</h1>
         <div class="video">
-          <iframe width="800" height="500" src="https://www.youtube.com/embed/_5g5pe3FvaQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+          <iframe width="800" height="500" src="${link}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
           </iframe>
         </div>
       </div>      
