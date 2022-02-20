@@ -3,10 +3,14 @@ import { answerArr } from './compareAnswers';
 import { getAudio, getWords, objectArr, playSound } from './startGame';
 import { stopTimer } from './timer';
 import { audioCallView } from './view';
+import SprintController from '../sprint-game/SprintController';
 
 const audioArr: string[] = [];
 
 export function staticRound(arr: Word[], score: number) {
+  if (arr.length == 0) {
+    return alert('Недостаточно слов для игры');
+  }
   audioArr.length = 0;
   stopTimer();
   const rightWords: Word[] = [];
@@ -17,7 +21,11 @@ export function staticRound(arr: Word[], score: number) {
   const fragmentWrong = document.createDocumentFragment();
   const fragmentRight = document.createDocumentFragment();
   for (let i = 0; i < arr.length; i++) {
-    arr[i].wordTranslate === answerArr[i] ? rightWords.push(arr[i]) : wrongWords.push(arr[i]);
+    if (arr[i].wordTranslate === answerArr[i]) {
+      rightWords.push(arr[i]);
+    } else {
+      wrongWords.push(arr[i]);
+    }
   }
   wrongWords.map((result) => {
     audioArr.push(result.audio);
@@ -74,6 +82,7 @@ export function staticRound(arr: Word[], score: number) {
   });
   objectArr.length = 0;
   answerArr.length = 0;
+  score = 0;
 }
 
 function listenerSound() {
