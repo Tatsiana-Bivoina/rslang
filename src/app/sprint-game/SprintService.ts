@@ -1,4 +1,4 @@
-import { UserChoiseOptional, Word } from './abstracts';
+import { ParametersSendWord, ParametersPutStatistics, ParametersGetStatistics, Word } from './abstracts';
 
 export default class SprintService {
   static wordCollection: Word[] = [];
@@ -24,7 +24,7 @@ export default class SprintService {
           'Content-Type': 'application/json'
         }
       });
-      if (response.status === 401) throw new Error('Access token is missing or invalid');
+      this.handleErrors(response);
       const res = await response.json();
       return res[0].paginatedResults;
     } catch (error) {
@@ -32,29 +32,88 @@ export default class SprintService {
     }
   }
 
-  async postUserWord(id: string, wordId: string, token: string, optional: UserChoiseOptional): Promise<void> {
-    const url = `https://rslang-leanwords.herokuapp.com/users/${id}/words/${wordId}`;
+  async sendUserWord(parameters: ParametersSendWord): Promise<void> {
+    const url = `https://rslang-leanwords.herokuapp.com/users/${parameters.userId}/words/${parameters.wordId}`;
     const data = {
-      difficulty: 'work',
+      difficulty: 'easy',
       optional: {
-        correctCount: optional.correctCount,
-        errorCount: optional.errorCount
+        id: parameters.wordId,
+        correctCount: parameters.optional.correctCount,
+        errorCount: parameters.optional.errorCount
       }
     };
     try {
       const response = await fetch(url, {
-        method: 'POST',
+        method: parameters.methodHttp,
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${parameters.token}`,
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(data)
       });
-      if (response.status === 400) throw new Error('Bad request');
-      if (response.status === 401) throw new Error('Access token is missing or invalid');
-    } catch (error) {
-      throw new Error(`Something went wrong... ${error}`);
+      this.handleErrors(response);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
     }
+  }
+
+  async getStatistic(userId: string, token: string): Promise<ParametersGetStatistics | undefined> {
+    const url = `https://rslang-leanwords.herokuapp.com/users/${userId}/statistics`;
+    try {
+      const response = await fetch(url, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        }
+      });
+      this.handleErrors(response);
+      const res: ParametersGetStatistics | undefined = await response.json();
+      return res;
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
+  }
+
+  async putStatistics(userId: string, token: string, gameStatistic: ParametersPutStatistics): Promise<void> {
+    const url = `https://rslang-leanwords.herokuapp.com/users/${userId}/statistics`;
+    const data: ParametersPutStatistics = {
+      learnedWords: gameStatistic.learnedWords,
+      optional: gameStatistic.optional
+    };
+    const requestData = {
+      learnedWords: data.learnedWords,
+      optional: {
+        statistics: JSON.stringify(data.optional.statistics)
+      }
+    };
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(requestData)
+      });
+      this.handleErrors(response);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      }
+    }
+  }
+
+  handleErrors(response: Response): void {
+    if (response.status === 400) throw new Error('Bad request');
+    if (response.status === 401) throw new Error('Access token is missing or invalid');
+    if (response.status === 404) throw new Error('Statistics not found');
   }
 }

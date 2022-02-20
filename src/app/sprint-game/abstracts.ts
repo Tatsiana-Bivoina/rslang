@@ -1,5 +1,6 @@
 export type Word = {
-  id: string;
+  id?: string;
+  _id?: string;
   group: number;
   page: number;
   word: string;
@@ -13,6 +14,7 @@ export type Word = {
   wordTranslate: string;
   textMeaningTranslate: string;
   textExampleTranslate: string;
+  userWord?: { difficulty: string; optional: UserChoiseOptional };
 };
 
 export type GameResult = {
@@ -24,6 +26,7 @@ export type GameResult = {
 };
 
 export type UserChoiseOptional = {
+  wordId: string;
   correctCount: number;
   errorCount: number;
 };
@@ -33,4 +36,31 @@ export type GameStatistic = {
   wordsTrueId: string[];
   wordsFalseId: string[];
   score: number;
+  seriesTrueAnswers: number;
+  learnedWords: string[];
+};
+
+export type Statistics = {
+  statistics: GameStatistic[];
+};
+
+export type ParametersSendWord = {
+  userId: string;
+  wordId: string;
+  token: string;
+  optional: UserChoiseOptional;
+  methodHttp: string;
+};
+
+export type ParametersPutStatistics = {
+  learnedWords: number;
+  optional: Statistics;
+};
+
+export type ParametersGetStatistics = {
+  id: string;
+  learnedWords: number;
+  optional: {
+    statistics: string;
+  };
 };
