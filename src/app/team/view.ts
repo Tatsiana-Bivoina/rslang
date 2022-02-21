@@ -16,21 +16,21 @@ export async function teamView(): Promise<HTMLDivElement> {
     'Nick Malysh',
     'github.com/vostavhy',
     'главная, авторизация, backend',
-    '../images/team/member1.png'
+    './images/team/member1.png'
   );
 
   const member2 = new TeamMember(
     'Tatsiana Bivoina',
     'github.com/Tatsiana-Bivoina',
     'игра "Спринт", статистика',
-    '../images/team/member2.png'
+    './images/team/member2.png'
   );
 
   const member3 = new TeamMember(
     'Sotnikova Ekaterina',
     'github.com/katesoo',
     'игра "Аудио-вызов", словарь',
-    '../images/team/member3.jpg'
+    './images/team/member3.jpg'
   );
 
   const members: TeamMember[] = [member1, member2, member3];
