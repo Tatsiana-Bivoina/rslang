@@ -1,4 +1,15 @@
+import { drawPage } from '../app';
+import { audioCallView } from '../audiocall-game/view';
+import { dictionaryView } from '../dictionary/view';
+import SprintView from '../sprint-game/SprintView';
+import StatisticController from '../statistic/StatisticController';
+import StatisticView from '../statistic/StatisticView';
+
 export async function mainView(): Promise<HTMLDivElement> {
+  const response = await fetch('https://raw.githubusercontent.com/vostavhy/landings/dev/.links');
+  const link = await response.text();
+  console.log(link);
+
   const page: HTMLDivElement = document.createElement('div');
   page.classList.add('page__main');
   page.innerHTML = `
@@ -23,12 +34,12 @@ export async function mainView(): Promise<HTMLDivElement> {
             <p class="advantage__text">Авторизованный пользователь может добавлять сложные слова в словарь</p>
           </div>
           <div class="advantage advantage-sprint">
-            <h3 class="advantage__title">Игра сприт</h3>
-            <p class="advantage__text">Попробуй вспонить правильный перевод слова!</p>
+            <h3 class="advantage__title">Игра спринт</h3>
+            <p class="advantage__text">Попробуй вспомнить правильный перевод слова!</p>
           </div>
           <div class="advantage advantage-audio-call">
             <h3 class="advantage__title">Игра аудиовызов</h3>
-            <p class="advantage__text">Попробуй на слух правильно составить приложение!</p>
+            <p class="advantage__text">Попробуй на слух правильно составить предложение!</p>
           </div>
           <div class="advantage advantage-statistic">
             <h3 class="advantage__title">Статистика</h3>
@@ -42,11 +53,35 @@ export async function mainView(): Promise<HTMLDivElement> {
       <div class="wrapper wrapper-video">
         <h1 class="section__title">Видеопрезентация</h1>
         <div class="video">
-          <iframe width="800" height="500" src="https://www.youtube.com/embed/_5g5pe3FvaQ" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+          <iframe width="800" height="500" src="${link}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
           </iframe>
         </div>
       </div>      
     </section>
   `;
+
+  const advantages = page.querySelectorAll('.advantage');
+  for (const advantage of advantages) {
+    advantage.addEventListener('click', async (event) => {
+      const target = event.currentTarget as Element;
+      if (target.matches('.advantage-dictionary')) {
+        await drawPage(dictionaryView);
+      }
+      if (target.matches('.advantage-sprint')) {
+        const sprint = new SprintView();
+        await drawPage(sprint.sprintView);
+      }
+      if (target.matches('.advantage-audio-call')) {
+        await drawPage(audioCallView);
+      }
+      if (target.matches('.advantage-statistic')) {
+        const statistic = new StatisticView();
+        const statisticController = new StatisticController();
+        await statisticController.getUserData();
+        await drawPage(statistic.statisticView);
+        statisticController.updatePage();
+      }
+    });
+  }
   return page;
 }

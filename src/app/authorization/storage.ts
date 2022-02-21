@@ -17,9 +17,9 @@ export class UserData {
     const tokenCreationDate = Number(localStorage.getItem(Data.tokenCreationDate));
     if (Date.now() - tokenCreationDate < 1000 * 60 * 60 * 4) return localStorage.getItem(Data.token) || '';
 
-    const rawResponse = await fetch(`${SERVER_URL}$/${this.userId}/tokens`, {
+    const rawResponse = await fetch(`${SERVER_URL}/users/${this.userId}/tokens`, {
       method: 'GET',
-      credentials: 'include',
+      credentials: 'omit',
       headers: {
         Authorization: `Bearer ${this.refreshToken}`,
         Accept: 'application/json'
@@ -31,7 +31,11 @@ export class UserData {
       return '';
     }
     const content: IUserAuthResponse = await rawResponse.json();
+    const currentUserID = this.userId;
+    const currentUserName = this.name;
     this.saveData(content);
+    this.userId = currentUserID;
+    this.name = currentUserName;
     return localStorage.getItem(Data.token) || '';
   }
 
