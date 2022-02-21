@@ -1,29 +1,48 @@
 import { Word } from './models';
-import { answerArr } from './compareAnswers';
-import { getAudio, getWords, objectArr, playSound } from './startGame';
+import { answerArr, maxSeriesTrue, correctCount, errorCount } from './compareAnswers';
+import { getAudio, getWords, objectArr, playSound, servise } from './startGame';
 import { stopTimer } from './timer';
 import { audioCallView } from './view';
-import SprintController from '../sprint-game/SprintController';
+import { GameStatistic, ParametersPutStatistics, Statistics } from '../sprint-game/abstracts';
+import { UserData } from '../authorization/storage';
 
 const audioArr: string[] = [];
+const rightWords: Word[] = [];
+const wrongWords: Word[] = [];
 
-export function staticRound(arr: Word[], score: number) {
-  if (arr.length == 0) {
-    return alert('Недостаточно слов для игры');
-  }
-  audioArr.length = 0;
+export async function staticRound(arr: Word[], score: number) {
   stopTimer();
-  const rightWords: Word[] = [];
-  const wrongWords: Word[] = [];
+  console.log(score);
+  const user = new UserData();
+  const token = (await user.getToken()).toString();
+  audioArr.length = 0;
   const pageWrap = document.querySelector('.page__audio-call') as HTMLElement;
-  const endPage = document.createElement('div');
-  endPage.classList.add('page-end-audio');
+  let endPage: HTMLElement;
+  if (document.querySelector('.page-end-audio')) {
+    endPage = document.querySelector('.page-end-audio')!;
+  } else {
+    endPage = document.createElement('div');
+    endPage.classList.add('page-end-audio');
+  }
   const fragmentWrong = document.createDocumentFragment();
   const fragmentRight = document.createDocumentFragment();
+  const gameStatistic: GameStatistic = {
+    gameName: 'audioCall',
+    wordsTrueId: [],
+    wordsFalseId: [],
+    score: score,
+    seriesTrueAnswers: maxSeriesTrue,
+    learnedWords: []
+  };
+  const arrGameStatistic: Statistics = {
+    statistics: [gameStatistic]
+  };
   for (let i = 0; i < arr.length; i++) {
     if (arr[i].wordTranslate === answerArr[i]) {
+      gameStatistic.wordsTrueId.push(`${arr[i].id}`);
       rightWords.push(arr[i]);
     } else {
+      gameStatistic.wordsFalseId.push(`${arr[i].id}`);
       wrongWords.push(arr[i]);
     }
   }
@@ -75,14 +94,19 @@ export function staticRound(arr: Word[], score: number) {
       });
     });
     document.querySelector('.repeat')?.addEventListener('click', () => {
-      console.log('repeat');
       getWords(Number(localStorage.getItem('group')), Number(localStorage.getItem('page')));
     });
     listenerSound();
   });
+  const parameters: ParametersPutStatistics = {
+    learnedWords: rightWords.length,
+    optional: arrGameStatistic
+  };
+  servise.putStatistics(user.userId, token, parameters);
   objectArr.length = 0;
   answerArr.length = 0;
-  score = 0;
+  rightWords.length = 0;
+  wrongWords.length = 0;
 }
 
 function listenerSound() {

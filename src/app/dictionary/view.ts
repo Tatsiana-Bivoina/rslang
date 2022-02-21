@@ -1,6 +1,7 @@
 import { postUserWords, getUsersWords } from '../audiocall-game/startGame';
 import { UserData } from '../authorization/storage';
-import { Word } from '../audiocall-game/models';
+import { Word, userWord } from '../audiocall-game/models';
+import { correctCount } from '../audiocall-game/compareAnswers';
 export let pageNum = 0;
 
 export let i: string;
@@ -76,13 +77,9 @@ function paginatePages(e: Event) {
 }
 
 async function getWords(e?: Event): Promise<void> {
-  i = e ? (e?.target as HTMLElement).id : '0';
-  // let url = '';
-  // if (authorized) {
-  //   url = `https://rslang-leanwords.herokuapp.com/words?group=${i}&page=${pageNum}`;
-  // } else {
-  //   url = `https://rslang-leanwords.herokuapp.com/words?group=${i}&page=${pageNum}`;
-  // }
+  const colorId = localStorage.getItem('colorId') || '0';
+  localStorage.setItem('colorId', colorId);
+  i = e ? (e?.target as HTMLElement).id : localStorage.getItem('colorId')!;
   if (i == '6') {
     const hardArr = (await getHardWords())[0].paginatedResults;
     renderPage(hardArr, i);
@@ -94,6 +91,10 @@ async function getWords(e?: Event): Promise<void> {
 }
 
 async function renderPage(wordsArr: Word[], id?: string) {
+  if (id) {
+    localStorage.setItem('colorId', id);
+  }
+  id = localStorage.getItem('colorId') || undefined;
   const wordsWrapp = document.querySelector('.words') as HTMLElement;
   const paginationWrap = document.querySelector('.pagination-page');
   paginationWrap!.innerHTML = ``;
@@ -104,7 +105,7 @@ async function renderPage(wordsArr: Word[], id?: string) {
   let easyArr: Word[] = [];
   if (authorized) {
     hardArr = (await getHardWords())[0].paginatedResults;
-    easyArr = await getEasyWords();
+    easyArr = (await getEasyWords())[0].paginatedResults;
   }
   for (let i = 0; i < wordsArr.length; i++) {
     switch (id) {
@@ -132,24 +133,37 @@ async function renderPage(wordsArr: Word[], id?: string) {
     }
     const complecation = {
       class: 'easy',
-      word: 'Сложное'
+      word: 'Сложное',
+      correct: '0',
+      error: '0'
     };
     const learned = {
       class: 'learned',
-      word: 'Уже знаю'
+      word: 'Уже знаю',
+      correct: '0',
+      error: '0'
     };
     if (authorized !== false) {
       hardArr.forEach((word) => {
-        if (word._id === wordsArr[i].id) {
+        if (word._id === wordsArr[i].id || id == '6') {
           complecation.class = 'hard';
           complecation.word = 'Простое';
           color = 'rgb(78,78,78)';
+          complecation.correct = word.userWord.optional!.correctCount.toString();
+          complecation.error = word.userWord.optional!.errorCount.toString();
         }
       });
       easyArr.forEach((word) => {
         if (word._id === wordsArr[i].id) {
+          color = '#00ff0e';
           learned.class = 'learned-word';
           learned.word = 'Не знаю';
+          learned.correct = word.userWord.optional!.correctCount.toString();
+          learned.error = word.userWord.optional!.errorCount.toString();
+          if (learned.correct < learned.error) {
+            learned.word = 'Уже знаю';
+            learned.class = 'learned';
+          }
         }
       });
     }
@@ -161,6 +175,7 @@ async function renderPage(wordsArr: Word[], id?: string) {
       <div class="book-word">${wordsArr[i].word}</div>
       <div class="transcription">${wordsArr[i].transcription}</div>
       <div class="translate">${wordsArr[i].wordTranslate}</div>
+    <div class="progress"></div>
     </div>
     <div class="description">
     <div class="parts">
@@ -187,6 +202,9 @@ async function renderPage(wordsArr: Word[], id?: string) {
       wordCard.querySelector('.learned')?.addEventListener('click', (e: Event) => {
         addToLearned(wordsArr[i], e, color);
       });
+      wordCard.querySelector('.progress')!.innerHTML = `${learned.correct || complecation.correct} : ${
+        learned.error || complecation.error
+      }`;
     }
     (
       wordCard.querySelector('.word-image') as HTMLElement
@@ -203,9 +221,21 @@ async function renderPage(wordsArr: Word[], id?: string) {
   <div class="pag-but double-right-arrow" id="double-r"></div>`;
 }
 
-function addToComplecative(word: Word, e: Event, color?: string) {
+async function getMethod(word: Word): Promise<string> {
+  let method: string;
+  const userArr: userWord[] = Array.from(await getUsersWords());
+  for (let i = 0; i < userArr.length; i++) {
+    if (userArr[i].optional.wordId !== word.id) {
+      return 'POST';
+    }
+  }
+  return 'PUT';
+}
+
+async function addToComplecative(word: Word, e: Event, color?: string) {
+  const method = (await getMethod(word)).toString();
   if (!(e.target as HTMLElement).classList.contains('hard-word')) {
-    postUserWords(word, 'hard');
+    postUserWords(word, 'hard', method);
     (e.target as HTMLElement).classList.add('hard-word');
     ((e.target as Element).closest('.shadow') as HTMLElement).style.background =
       'linear-gradient(rgba(0, 0, 0, 0), rgb(78,78,78) 190%)';
@@ -216,41 +246,32 @@ function addToComplecative(word: Word, e: Event, color?: string) {
       (e.target as Element).closest('.shadow') as HTMLElement
     ).style.background = `linear-gradient(rgba(0, 0, 0, 0), ${color} 190%)`;
     (e.target as HTMLElement).innerHTML = 'Сложное';
-    deleteUserWord(word);
+    postUserWords(word, 'easy', method);
   }
 }
 
 function addToLearned(word: Word, e: Event, color?: string) {
   if (!(e.target as HTMLElement).classList.contains('learned-word')) {
     (e.target as HTMLElement).classList.add('learned-word');
+    (
+      (e.target as Element).closest('.shadow') as HTMLElement
+    ).style.background = `linear-gradient(rgba(0, 0, 0, 0), #00ff0e 100%)`;
     (e.target as HTMLElement).innerHTML = 'Не знаю';
-    postUserWords(word);
+    postUserWords(word, 'easy');
   } else {
     (e.target as HTMLElement).classList.remove('learned-word');
+    (
+      (e.target as Element).closest('.shadow') as HTMLElement
+    ).style.background = `linear-gradient(rgba(0, 0, 0, 0), ${color} 190%)`;
     (e.target as HTMLElement).innerHTML = 'Уже знаю';
   }
-}
-
-async function deleteUserWord(word: Word) {
-  const user = new UserData();
-  const token = (await user.getToken()).toString();
-  console.log(word);
-
-  const url = await fetch(`https://rslang-leanwords.herokuapp.com/users/${user.userId}/words/${word.id}`, {
-    method: 'DELETE',
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/json',
-      'Content-Type': 'application/json'
-    }
-  });
 }
 
 export async function getHardWords() {
   const user = new UserData();
   const token = (await user.getToken()).toString();
   const rawResponse = await fetch(
-    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?filter={"$and":[{"userWord.difficulty":"hard"}]}`,
+    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?wordsPerPage=3600&filter={"userWord.difficulty":"hard"}`,
     {
       method: 'GET',
       headers: {
@@ -268,7 +289,7 @@ async function getEasyWords() {
   const user = new UserData();
   const token = (await user.getToken()).toString();
   const rawResponse = await fetch(
-    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?filter={"$and":[{"userWord.difficulty":"easy"}]}`,
+    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?wordsPerPage=3600&filter={"userWord.difficulty":"easy"}`,
     {
       method: 'GET',
       headers: {
@@ -279,5 +300,5 @@ async function getEasyWords() {
     }
   );
   const res = await rawResponse.json();
-  return res[0].paginatedResults;
+  return res;
 }

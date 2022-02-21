@@ -14,6 +14,12 @@ export interface Word {
   wordTranslate: string;
   textMeaningTranslate: string;
   textExampleTranslate: string;
+  userWord: {
+    optional: {
+      correctCount: number;
+      errorCount: number;
+    };
+  };
 }
 
 export interface userWord {
@@ -22,5 +28,7 @@ export interface userWord {
     testFieldString: string;
     testFieldBoolean: boolean;
     wordId: string;
+    correctCount: number;
+    errorCount: number;
   };
 }
