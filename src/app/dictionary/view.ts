@@ -172,7 +172,7 @@ async function renderPage(wordsArr: Word[], id?: string) {
     wordCard.innerHTML = `<div class="word-image" style="box-shadow: 0px 5px 25px ${color}"></div>
     <div class="shadow" style="background: linear-gradient(rgba(0, 0, 0, 0), ${color} 190%)">
     <div class="about-word">
-      <div class="book-word">${wordsArr[i].word}</div>
+      <div class="book-word"><div class="word-audio"></div>${wordsArr[i].word}</div>
       <div class="transcription">${wordsArr[i].transcription}</div>
       <div class="translate">${wordsArr[i].wordTranslate}</div>
     <div class="progress"></div>
@@ -180,8 +180,8 @@ async function renderPage(wordsArr: Word[], id?: string) {
     <div class="description">
     <div class="parts">
     <div class="english-part">
-    <div class="meaning-en">${wordsArr[i].textMeaning}</div>
-    <div class="example-en">${wordsArr[i].textExample}</div>
+    <div class="meaning-en"><div class="meaning-audio"></div>${wordsArr[i].textMeaning}</div>
+    <div class="example-en"><div class="example-audio"></div>${wordsArr[i].textExample}</div>
   </div>
   <div class="russian-part">
     <div class="meaning-ru">${wordsArr[i].textMeaningTranslate}</div>
@@ -206,6 +206,18 @@ async function renderPage(wordsArr: Word[], id?: string) {
         learned.error || complecation.error
       }`;
     }
+    wordCard.querySelector('.word-audio')?.addEventListener('click', () => {
+      const audio = new Audio(`https://rslang-leanwords.herokuapp.com/${wordsArr[i].audio}`);
+      audio.play();
+    });
+    wordCard.querySelector('.meaning-audio')?.addEventListener('click', () => {
+      const audio = new Audio(`https://rslang-leanwords.herokuapp.com/${wordsArr[i].audioMeaning}`);
+      audio.play();
+    });
+    wordCard.querySelector('.example-audio')?.addEventListener('click', () => {
+      const audio = new Audio(`https://rslang-leanwords.herokuapp.com/${wordsArr[i].audioExample}`);
+      audio.play();
+    });
     (
       wordCard.querySelector('.word-image') as HTMLElement
     ).style.backgroundImage = `url("https://rslang-leanwords.herokuapp.com/${wordsArr[i].image}")`;

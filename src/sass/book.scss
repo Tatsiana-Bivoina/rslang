@@ -26,7 +26,7 @@ $color-form-bg-darker: #ddd;
         text-align: center;
       }
     }
-    .words-wrap{
+    .words-wrap {
       display: flex;
       flex-wrap: wrap;
       overflow: scroll;
@@ -69,6 +69,14 @@ $color-form-bg-darker: #ddd;
           .book-word {
             font-size: 30px;
             font-weight: 600;
+            display: flex;
+            .word-audio {
+              filter: brightness(0.3);
+              width: 35px;
+              height: 35px;
+              background-image: url('../images/outline_volume_up_white_24dp.png');
+              background-size: contain;
+            }
           }
           .translate {
             font-weight: 600;
@@ -80,6 +88,18 @@ $color-form-bg-darker: #ddd;
         .english-part,
         .russian-part {
           padding: 10px;
+          .example-en,
+          .meaning-en {
+            display: flex;
+          }
+          .example-audio,
+          .meaning-audio {
+            filter: brightness(0.3);
+            width: 35px;
+            height: 35px;
+            background-image: url('../images/outline_volume_up_white_24dp.png');
+            background-size: contain;
+          }
           // text-align: center;
         }
         .word-buttons {
