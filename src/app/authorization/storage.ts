@@ -26,7 +26,6 @@ export class UserData {
       }
     });
     if (rawResponse.status !== 200) {
-      // TODO raise logout function
       console.log(`Response status: ${rawResponse.status}`);
       return '';
     }

@@ -16,7 +16,7 @@ const userData = new UserData();
 // создание пользователя
 async function createUser(form: HTMLFormElement): Promise<IUserRegisterResponse | IStatus> {
   const user = getUserData(form);
-  console.log(`start creating user ${JSON.stringify(user)}`);
+  // console.log(`start creating user ${JSON.stringify(user)}`);
   const rawResponse = await fetch(`${SERVER_URL}/users`, {
     method: 'POST',
     headers: {
@@ -31,7 +31,7 @@ async function createUser(form: HTMLFormElement): Promise<IUserRegisterResponse 
   } else {
     jsonResponse = { status: rawResponse.status };
   }
-  console.log(`jsonResponse: ${JSON.stringify(jsonResponse)}`);
+  // console.log(`jsonResponse: ${JSON.stringify(jsonResponse)}`);
   return jsonResponse;
 }
 
@@ -52,7 +52,7 @@ async function authUser(user: IUserLogin): Promise<IUserAuthResponse | IStatus> 
   } else {
     jsonResponse = { status: rawResponse.status };
   }
-  console.log(`jsonResponse: ${JSON.stringify(jsonResponse)}`);
+  // console.log(`jsonResponse: ${JSON.stringify(jsonResponse)}`);
   return jsonResponse;
 }
 
