@@ -1,0 +1,115 @@
+.book-page-wrapper {
+  height: calc(100vh - 60px);
+  width: 100vw;
+  background-image: url("../images/backs/20.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+}
+
+.book-page-wrapper .book-page {
+  background-color: #ebebeb;
+  margin: auto;
+  height: calc(100vh - 60px);
+  width: 90vw;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.book-page-wrapper .book-page .nav-group {
+  border-right: #db9090 1px solid;
+  -webkit-box-shadow: #db9090 0px 2px 8px;
+          box-shadow: #db9090 0px 2px 8px;
+  height: 100%;
+  width: 30%;
+}
+
+.book-page-wrapper .book-page .nav-group .nav-item {
+  color: #575757;
+  padding: 15px;
+  background-color: #ebebeb;
+  text-align: center;
+}
+
+.book-page-wrapper .book-page .words {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  overflow: scroll;
+  color: #4e4e4e;
+}
+
+.book-page-wrapper .book-page .words .word-card {
+  border-radius: 50%;
+  width: 90%;
+  margin: 20px 25px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+.book-page-wrapper .book-page .words .word-card .word-image {
+  position: relative;
+  margin: auto;
+  margin-right: 10px;
+  border-radius: 50%;
+  width: 200px;
+  height: 180px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.book-page-wrapper .book-page .words .word-card .description {
+  font-size: 22px;
+  height: 200px;
+  width: inherit;
+}
+
+.book-page-wrapper .book-page .words .word-card .about-word {
+  padding: 15px;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-pack: distribute;
+      justify-content: space-around;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.book-page-wrapper .book-page .words .word-card .about-word .book-word {
+  font-size: 30px;
+  font-weight: 600;
+}
+
+.book-page-wrapper .book-page .words .word-card .about-word .translate {
+  font-weight: 600;
+}
+
+.book-page-wrapper .book-page .words .word-card .english-part,
+.book-page-wrapper .book-page .words .word-card .russian-part {
+  padding: 10px;
+  text-align: center;
+}
+
+.book-page-wrapper .book-page .words .word-card .difficulty {
+  width: -webkit-fit-content;
+  width: -moz-fit-content;
+  width: fit-content;
+  height: -webkit-fit-content;
+  height: -moz-fit-content;
+  height: fit-content;
+  padding: 15px;
+  background-color: #fff;
+}
+/*# sourceMappingURL=book.css.map */

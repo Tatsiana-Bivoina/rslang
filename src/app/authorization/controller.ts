@@ -95,6 +95,7 @@ export function drawUserInfo() {
         if (target.matches('.item-exit')) {
           // если кликаем по кнопке "Выход"
           logOut();
+          localStorage.removeItem('authorized');
           return;
         }
         if (dropDownContent.classList.contains('show')) {

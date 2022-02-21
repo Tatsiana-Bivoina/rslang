@@ -10,12 +10,14 @@ export class UserData {
   }
 
   public async getToken(): Promise<string> {
-    const tokenCreationDate = Number(localStorage.getItem(Data.tokenCreationDate));
+    // если пользователь не авторизован, вернём пустую строку
+    if (this.name === '') return '';
 
     // если прошло менее 4 часов, вернём текущий токен, если более - сгенерим и вернём новый токен
+    const tokenCreationDate = Number(localStorage.getItem(Data.tokenCreationDate));
     if (Date.now() - tokenCreationDate < 1000 * 60 * 60 * 4) return localStorage.getItem(Data.token) || '';
 
-    const rawResponse = await fetch(`${SERVER_URL}${this.userId}/tokens`, {
+    const rawResponse = await fetch(`${SERVER_URL}/${this.userId}/tokens`, {
       method: 'GET',
       credentials: 'include',
       headers: {

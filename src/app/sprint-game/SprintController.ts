@@ -1,11 +1,24 @@
-import { Word, WordStatistic } from './abstracts';
+import {
+  Word,
+  GameResult,
+  UserChoiseOptional,
+  GameStatistic,
+  ParametersSendWord,
+  ParametersGetStatistics,
+  ParametersPutStatistics
+} from './abstracts';
 import SprintService from './SprintService';
 import SprintView from './SprintView';
+import { drawPage } from '../app';
+import { mainView } from '../main/view';
+import { UserData } from '../authorization/storage';
 
 export default class SprintController {
   sprintService: SprintService;
 
   sprintView: SprintView;
+
+  userData: UserData;
 
   rand: number;
 
@@ -13,7 +26,7 @@ export default class SprintController {
 
   translationArr: string[];
 
-  wordStatistic: WordStatistic[];
+  gameResults: GameResult[];
 
   index: number;
 
@@ -31,13 +44,33 @@ export default class SprintController {
 
   page: string;
 
+  userId: string;
+
+  token: string;
+
+  userChoiseOptional: UserChoiseOptional;
+
+  static gameStatistic: ParametersPutStatistics = {
+    learnedWords: 0,
+    optional: {
+      statistics: []
+    }
+  };
+
+  statistics: GameStatistic;
+
+  seriesTrueAnswers: number;
+
+  counterTrueAnswers: number;
+  static SprintController: any;
+
   constructor() {
     this.sprintService = new SprintService();
     this.sprintView = new SprintView();
     this.rand = 0;
     this.wordsArr = [];
     this.translationArr = [];
-    this.wordStatistic = [];
+    this.gameResults = [];
     this.index = 0;
     this.pressedBtn = '';
     this.counter = 0;
@@ -46,6 +79,44 @@ export default class SprintController {
     this.checkboxCount = 0;
     this.level = '';
     this.page = '';
+    this.userData = new UserData();
+    this.userId = '';
+    this.token = '';
+    this.userChoiseOptional = {
+      wordId: '',
+      correctCount: 0,
+      errorCount: 0
+    };
+    this.statistics = {
+      gameName: '',
+      wordsTrueId: [],
+      wordsFalseId: [],
+      score: 0,
+      seriesTrueAnswers: 0,
+      learnedWords: []
+    };
+    this.seriesTrueAnswers = 0;
+    this.counterTrueAnswers = 0;
+    this.getUserData();
+  }
+
+  private async getUserData(): Promise<void> {
+    this.userId = this.userData.userId;
+    if (this.userId !== '') {
+      this.token = await this.userData.getToken();
+      await this.getStatistics();
+    }
+  }
+
+  async getStatistics(): Promise<void> {
+    const response: ParametersGetStatistics | undefined = await this.sprintService.getStatistic(
+      this.userId,
+      this.token
+    );
+    if (typeof response !== 'undefined') {
+      SprintController.gameStatistic.learnedWords = response.learnedWords;
+      SprintController.gameStatistic.optional.statistics = JSON.parse(response.optional.statistics);
+    }
   }
 
   async toggleFullScreen(): Promise<void> {
@@ -68,15 +139,41 @@ export default class SprintController {
     btnsBlock?.addEventListener('click', async (ev) => {
       const btn = ev.target as HTMLElement;
       if (btn.classList.contains('btn-level')) {
-        btnStart?.removeAttribute('disabled');
         if (btnStart) this.addActiveClass(btn, btnStart);
         this.level = (Number(btn.textContent) - 1).toString();
         this.page = Math.floor(this.getRandomNumber()).toString();
-        await this.sprintService.getWords(this.level, this.page);
+        await this.getWordsCollection();
+        btnStart?.removeAttribute('disabled');
       }
       if (btn.classList.contains('btn-start')) {
         this.startGame();
       }
+    });
+  }
+
+  async getWordsCollection(): Promise<void> {
+    if (this.userId !== '') {
+      SprintService.wordCollection = await this.sprintService.getAggregatedWords(
+        this.level,
+        this.page,
+        this.userId,
+        this.token
+      );
+      if (SprintService.wordCollection.length < 20) {
+        this.page = Math.floor(this.getRandomNumber()).toString();
+        const response = await this.sprintService.getAggregatedWords(this.level, this.page, this.userId, this.token);
+        SprintService.wordCollection = SprintService.wordCollection.concat(response);
+      }
+      console.log(SprintService.wordCollection);
+    } else {
+      SprintService.wordCollection = await this.sprintService.getWords(this.level, this.page);
+    }
+  }
+
+  async closeGame(): Promise<void> {
+    const btnExit: Element | null = document.querySelector('.btn-exit');
+    btnExit?.addEventListener('click', async () => {
+      await drawPage(mainView);
     });
   }
 
@@ -96,6 +193,7 @@ export default class SprintController {
   }
 
   startGame(): void {
+    this.statistics.gameName = 'sprint-game';
     this.sprintView.sprintGameView();
     this.createWordsArr();
     this.addListenerToBtnTrue();
@@ -125,7 +223,7 @@ export default class SprintController {
       if (seconds < 0 || this.index === SprintService.wordCollection.length) {
         clearInterval(intervalId);
         this.sprintView.sprintStatisticView();
-        this.updateStatisticPage(this.wordStatistic, this.totalPoints);
+        this.updateStatisticPage(this.gameResults, this.totalPoints);
       }
     }, 1000);
   }
@@ -133,7 +231,7 @@ export default class SprintController {
   private generateRandomIndexes(): number[] {
     const randomIndex: number[] = [];
     for (let i = 0; i < 9; i++) {
-      const randEl = Math.round(Math.random() * 19);
+      const randEl = Math.round(Math.random() * (this.wordsArr.length - 1));
       if (randomIndex.includes(randEl)) {
         i--;
         continue;
@@ -208,32 +306,91 @@ export default class SprintController {
     });
   }
 
-  private nextWord(): void {
+  private async nextWord(): Promise<void> {
     const isRight: boolean = this.checkIfTranslationRight();
     const checkboxes: NodeListOf<Element> = document.querySelectorAll('.checkbox');
-    if (isRight) {
-      const audioWright: HTMLAudioElement = new Audio('../images/sprint-game/audio/wright.mp3');
-      audioWright.play();
-      this.counter += 1;
-      this.checkboxCount += 1;
-      if (this.checkboxCount > 3) {
-        this.revokeCheckboxColor(checkboxes);
-        this.checkboxCount = 0;
-      } else {
-        this.paitCheckbox(checkboxes);
-      }
-      this.changeBonusPrice();
-      this.countTotalPoints();
+    const parameters: ParametersSendWord = {
+      userId: this.userId,
+      wordId: this.userChoiseOptional.wordId,
+      token: this.token,
+      optional: this.userChoiseOptional,
+      methodHttp: 'POST'
+    };
+    let currentWordId: string | undefined = '';
+    if (this.userId !== '') {
+      currentWordId = SprintService.wordCollection[this.index]._id;
     } else {
-      const audioWrong: HTMLAudioElement = new Audio('../images/sprint-game/audio/wrong.mp3');
-      audioWrong.play();
-      this.counter = 0;
-      this.checkboxCount = 0;
-      this.revokeCheckboxColor(checkboxes);
-      this.changeBonusPrice();
+      currentWordId = SprintService.wordCollection[this.index].id;
+    }
+    if (isRight && typeof currentWordId !== 'undefined') {
+      this.chooseWrightWord(checkboxes);
+      this.userChoiseOptional.correctCount = 1;
+      this.statistics.wordsTrueId.push(currentWordId);
+      if (!this.statistics.learnedWords.includes(currentWordId)) {
+        this.statistics.learnedWords.push(currentWordId);
+      }
+      this.counterTrueAnswers += 1;
+    } else {
+      this.chooseWrongWord(checkboxes);
+      this.userChoiseOptional.errorCount = 1;
+      if (typeof currentWordId !== 'undefined') {
+        this.statistics.wordsFalseId.push(currentWordId);
+        if (this.statistics.learnedWords.includes(currentWordId)) {
+          const currentWordIndex: number = this.statistics.learnedWords.indexOf(currentWordId);
+          this.statistics.learnedWords.splice(currentWordIndex, 1);
+        }
+      }
+      if (this.seriesTrueAnswers < this.counterTrueAnswers) {
+        this.seriesTrueAnswers = this.counterTrueAnswers;
+        this.counterTrueAnswers = 0;
+      }
+    }
+
+    if (SprintService.wordCollection[this.index].userWord) {
+      const correctCount: number | undefined = SprintService.wordCollection[this.index].userWord?.optional.correctCount;
+      const errorCount: number | undefined = SprintService.wordCollection[this.index].userWord?.optional.errorCount;
+      if (typeof correctCount !== 'undefined' && typeof errorCount !== 'undefined') {
+        this.userChoiseOptional.correctCount += correctCount;
+        this.userChoiseOptional.errorCount += errorCount;
+      }
+      parameters.methodHttp = 'PUT';
     }
     this.index += 1;
     this.updateWordContainer();
+    if (this.userId !== '') {
+      await this.sprintService.sendUserWord(parameters);
+    }
+    this.userChoiseOptional = {
+      wordId: '',
+      correctCount: 0,
+      errorCount: 0
+    };
+  }
+
+  private chooseWrightWord(checkboxes: NodeListOf<Element>) {
+    const audioWright: HTMLAudioElement = new Audio('../images/sprint-game/audio/wright.mp3');
+    audioWright.play();
+    this.counter += 1;
+    this.checkboxCount += 1;
+    if (this.checkboxCount > 3) {
+      this.revokeCheckboxColor(checkboxes);
+      this.checkboxCount = 0;
+    } else {
+      this.paitCheckbox(checkboxes);
+    }
+    this.changeBonusPrice();
+    this.countTotalPoints();
+    this.userChoiseOptional.correctCount = 1;
+  }
+
+  private chooseWrongWord(checkboxes: NodeListOf<Element>) {
+    const audioWrong: HTMLAudioElement = new Audio('../images/sprint-game/audio/wrong.mp3');
+    audioWrong.play();
+    this.counter = 0;
+    this.checkboxCount = 0;
+    this.revokeCheckboxColor(checkboxes);
+    this.changeBonusPrice();
+    this.userChoiseOptional.errorCount = 1;
   }
 
   private checkIfTranslationRight(): boolean {
@@ -253,7 +410,10 @@ export default class SprintController {
     if (word[0].wordTranslate !== currentTranslation && this.pressedBtn === 'btnFalse') {
       wordInfo.isRight = true;
     }
-    this.wordStatistic.push(wordInfo);
+    this.gameResults.push(wordInfo);
+    if (word[0]._id) {
+      this.userChoiseOptional.wordId = word[0]._id;
+    }
     return wordInfo.isRight;
   }
 
@@ -314,21 +474,41 @@ export default class SprintController {
 
   // Statistic
 
-  private updateStatisticPage(wordStatistic: WordStatistic[], totalPoints: number): void {
+  private async updateStatisticPage(wordStatistic: GameResult[], totalPoints: number): Promise<void> {
+    console.log(this.statistics.learnedWords);
     const pointsTitle: Element | null = document.querySelector('.total-points-title');
     if (pointsTitle) {
       pointsTitle.innerHTML = `Набрано ${totalPoints} очков.`;
     }
+    this.statistics.score = totalPoints;
+    this.statistics.seriesTrueAnswers = this.seriesTrueAnswers;
+
+    if (this.userId !== '') {
+      SprintController.gameStatistic.optional.statistics.push(this.statistics);
+      SprintController.gameStatistic.learnedWords = this.statistics.learnedWords.length;
+
+      await this.sprintService.putStatistics(this.userId, this.token, SprintController.gameStatistic);
+    }
+
     this.generateWrongWordsList(wordStatistic);
     this.generateWrightWordsList(wordStatistic);
     this.addListenetToBtnRestart();
+    this.addListenerToBtnLeave();
+    this.statistics = {
+      gameName: '',
+      wordsTrueId: [],
+      wordsFalseId: [],
+      score: 0,
+      seriesTrueAnswers: 0,
+      learnedWords: []
+    };
   }
 
-  private generateWrongWordsList(wordStatistic: WordStatistic[]): void {
+  private generateWrongWordsList(wordStatistic: GameResult[]): void {
     const mistakesList: Element | null = document.querySelector('.mistakes-list');
     const mistakesTitle: Element | null = document.querySelector('.mistakes-title span');
 
-    const wrongWords: WordStatistic[] = wordStatistic.filter((el) => el.isRight === false);
+    const wrongWords: GameResult[] = wordStatistic.filter((el) => el.isRight === false);
     if (mistakesList && mistakesTitle) {
       mistakesTitle.innerHTML = `${wrongWords.length}`;
       mistakesList.appendChild(this.createItems(wrongWords));
@@ -337,11 +517,11 @@ export default class SprintController {
     this.addListenerToBtnSound(soundBtns, wrongWords);
   }
 
-  private generateWrightWordsList(wordStatistic: WordStatistic[]): void {
+  private generateWrightWordsList(wordStatistic: GameResult[]): void {
     const correctsList: Element | null = document.querySelector('.correct-list');
     const correctsTitle: Element | null = document.querySelector('.correct-title span');
 
-    const wrightWords: WordStatistic[] = wordStatistic.filter((el) => el.isRight === true);
+    const wrightWords: GameResult[] = wordStatistic.filter((el) => el.isRight === true);
 
     if (correctsList && correctsTitle) {
       correctsTitle.innerHTML = `${wrightWords.length}`;
@@ -351,7 +531,7 @@ export default class SprintController {
     this.addListenerToBtnSound(soundBtns, wrightWords);
   }
 
-  private createItems(wordsArr: WordStatistic[]): DocumentFragment {
+  private createItems(wordsArr: GameResult[]): DocumentFragment {
     const fragment: DocumentFragment = document.createDocumentFragment();
 
     wordsArr.forEach((el) => {
@@ -368,7 +548,7 @@ export default class SprintController {
     return fragment;
   }
 
-  private addListenerToBtnSound(soundBtns: NodeListOf<Element>, wordsArr: WordStatistic[]): void {
+  private addListenerToBtnSound(soundBtns: NodeListOf<Element>, wordsArr: GameResult[]): void {
     soundBtns.forEach((el, index) => {
       el.addEventListener('click', () => {
         const audio = new Audio(`https://rslang-leanwords.herokuapp.com/${wordsArr[index].audio}`);
@@ -381,16 +561,25 @@ export default class SprintController {
     const btnRestart: Element | null = document.querySelector('.btn-restart');
     if (btnRestart) {
       btnRestart.addEventListener('click', async () => {
-        this.page = Math.floor(this.getRandomNumber()).toString();
-        await this.sprintService.getWords(this.level, this.page);
+        await this.getWordsCollection();
         this.index = 0;
         this.pressedBtn = '';
         this.counter = 0;
         this.price = 10;
         this.totalPoints = 0;
         this.checkboxCount = 0;
-        this.wordStatistic = [];
+        this.gameResults = [];
+        this.wordsArr = [];
+        this.translationArr = [];
         this.startGame();
+      });
+    }
+  }
+  addListenerToBtnLeave() {
+    const btnLeave: Element | null = document.querySelector('.btn-leave');
+    if (btnLeave) {
+      btnLeave.addEventListener('click', async () => {
+        await drawPage(mainView);
       });
     }
   }
