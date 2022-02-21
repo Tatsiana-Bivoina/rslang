@@ -16,7 +16,7 @@ export async function audioCallView(): Promise<HTMLDivElement> {
     <div class="page-audio-call-start">
       <div class="describe-card">
         <h1>Аудиовызов</h1>
-        <div class="description">Вы должны выбрать перевод услышанного слова.<br> Управление игрой: используйте мышку, используйте стрелки клавиатуры и Enter</div>
+        <div class="description">Вы должны выбрать перевод услышанного слова.<br> Управление игрой: используйте мышку либо цифры на клавиатуре</div>
         <div class="levels">
           <div class="level level-1">1</div>
           <div class="level level-2">2</div>
@@ -94,15 +94,13 @@ export function renderRound(): void {
       wrapper!.style.opacity = '0';
     }, 500);
     wrapper!.addEventListener('transitionend', () => {
-      console.log('trEnd');
       wrapper!.style.display = 'none';
+      // wrapper?.remove();
       wrapperAudioPlay.style.opacity = '1';
       wrapperAudioPlay.style.display = 'block';
     });
   }
 }
-
-let i = -1;
 
 export function renderQuestion(): void {
   stopTimer();
@@ -112,7 +110,6 @@ export function renderQuestion(): void {
   <div class="answer">${questionWords[1].wordTranslate}</div>
   <div class="answer">${questionWords[2].wordTranslate}</div>
   <div class="answer">${questionWords[3].wordTranslate}</div>`;
-  i = -1;
   timer(30);
 }
 
@@ -131,30 +128,12 @@ function listener() {
 }
 
 function keyBoard(e: KeyboardEvent) {
-  if (e.key == 'Enter') {
-    compareAnswer(document.querySelector('.answer-hover')!.innerHTML);
-  }
-  if (e.key == 'ArrowRight') {
-    i += 1;
-    if (i - 1 >= 0) {
-      document.querySelectorAll('.answer')[i - 1].classList.remove('answer-hover');
-    }
-    if (i === 4) {
-      i = 0;
-    }
-    document.querySelectorAll('.answer')[i].classList.add('answer-hover');
-  }
-  if (e.key == 'ArrowLeft') {
-    i -= 1;
-    if (i <= -1) {
-      i = 3;
-    }
-    if (i < 3) {
-      document.querySelectorAll('.answer')[i + 1].classList.remove('answer-hover');
-    } else {
-      document.querySelectorAll('.answer')[0].classList.remove('answer-hover');
-    }
-    document.querySelectorAll('.answer')[i].classList.add('answer-hover');
+  if (e.key == '1' || e.key == '2' || e.key == '3' || e.key == '4') {
+    document.querySelectorAll('.answer')[+e.key - 1].classList.add('answer-hover');
+    setTimeout(() => {
+      console.log('key');
+      compareAnswer(document.querySelectorAll('.answer')[+e.key - 1]!.innerHTML);
+    }, 200);
   }
 }
 

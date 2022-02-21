@@ -1,19 +1,22 @@
 import { userWord, Word } from './models';
-import { staticRound } from './statis';
 import { renderQuestion, renderRound } from './view';
 import { UserData } from '../authorization/storage';
-import { score } from './compareAnswers';
 import { authorized, getHardWords, i } from '../dictionary/view';
+import SprintService from '../sprint-game/SprintService';
 
 export const objectArr: Word[] = [];
 export let questionWords: Array<Word> = [];
 export let rightWord: Word;
 export let questionNum = 0;
 export let wordArr: Word[] = [];
+export let servise: SprintService;
 let randPage: number;
 
 export async function getWords(i: number, page?: number): Promise<void> {
-  console.log(page, i);
+  const user = new UserData();
+  const token = (await user.getToken()).toString();
+  servise = new SprintService();
+  const statisticStart = servise.getStatistic(user.userId, token);
   if (i == 6) {
     const hardArr = (await getHardWords())[0].paginatedResults;
     return mixArr(hardArr);
@@ -50,20 +53,52 @@ export async function getUsersWords() {
   }
 }
 
-export async function postUserWords(word: Word, diff?: string) {
+export async function getUsersWord(word: Word) {
   const user = new UserData();
   const token = (await user.getToken()).toString();
   const wordId = word.id ? word.id : word._id;
+  try {
+    const url = await fetch(`https://rslang-leanwords.herokuapp.com/users/${user.userId}/words/${wordId}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/json'
+      }
+    });
+    const res = await url.json();
+    return res;
+  } catch (e) {
+    console.log(`Error...${e}`);
+  }
+}
+
+export async function postUserWords(
+  word: Word,
+  diff?: string,
+  methodPut?: string,
+  correctCount?: number,
+  errorCount?: number
+) {
+  const method = methodPut ? methodPut : 'POST';
+  const user = new UserData();
+  const token = (await user.getToken()).toString();
+  const wordId = word.id ? word.id : word._id;
+  const otherCorrectCount = method == 'POST' ? 0 : (await getUsersWord(word)).optional.correctCount;
+  const otherErrorCount = method == 'POST' ? 0 : (await getUsersWord(word)).optional.errorCount;
+  const correct = correctCount !== undefined ? correctCount : otherCorrectCount;
+  const error = errorCount !== undefined ? errorCount : otherErrorCount;
   const aboutWord = {
     difficulty: !diff ? 'easy' : `${diff}`,
     optional: {
       testFieldString: 'test',
       testFieldBoolean: true,
-      wordId: wordId
+      wordId: wordId,
+      correctCount: correct,
+      errorCount: error
     }
   };
   const rawResponse = await fetch(`https://rslang-leanwords.herokuapp.com/users/${user.userId}/words/${wordId}`, {
-    method: 'POST',
+    method: `${method}`,
     headers: {
       Authorization: `Bearer ${token}`,
       Accept: 'application/json',
@@ -71,6 +106,9 @@ export async function postUserWords(word: Word, diff?: string) {
     },
     body: JSON.stringify(aboutWord)
   });
+  if (rawResponse.status == 417) {
+    postUserWords(word, diff, 'PUT', correctCount, errorCount);
+  }
 }
 
 function getRandomNum(num: number): number {
@@ -78,7 +116,6 @@ function getRandomNum(num: number): number {
 }
 
 function mixArr(res: Word[]) {
-  console.log('startMix');
   for (let i = res.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [res[i], res[j]] = [res[j], res[i]];
@@ -90,27 +127,9 @@ export async function getOtherWords(mixedArr: Word[]): Promise<Word[] | void> {
   questionWords = [];
   wordArr = mixedArr;
   rightWord = mixedArr[questionNum];
-  if (authorized !== false && i !== '6') {
-    const userArr: userWord[] = Array.from(await getUsersWords());
-    for (let i = 0; i < userArr.length; i++) {
-      if (userArr[i].optional.wordId == rightWord._id) {
-        questionNum++;
-        if (questionNum == 20) {
-          // if (randPage >= 1) {
-          //   randPage--;
-          //   const anotherPageWords = await getWords(i, randPage);
-          // }
-          return staticRound(objectArr, score);
-        } else {
-          return getOtherWords(wordArr);
-        }
-      }
-    }
-  }
   questionWords.push(rightWord);
   objectArr.push(rightWord);
   getAudio(rightWord.audio);
-  playSound();
   questionNum++;
   while (questionWords.length !== 4) {
     const ranNum = getRandomNum(mixedArr.length);
@@ -124,6 +143,7 @@ export async function getOtherWords(mixedArr: Word[]): Promise<Word[] | void> {
   } else {
     renderQuestion();
   }
+  playSound();
   return questionWords;
 }
 
