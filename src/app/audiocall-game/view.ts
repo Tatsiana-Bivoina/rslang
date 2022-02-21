@@ -67,11 +67,11 @@ export function renderRound(): void {
     wrapperAudioPlay.innerHTML = `<div class="audio-call-play">
     <div class="header-audio">
       <div class="hearts">
-        <img src="../../images/red-heart.png" alt="heart" class="heart">
-        <img src="../../images/red-heart.png" alt="heart" class="heart">
-        <img src="../../images/red-heart.png" alt="heart" class="heart">
-        <img src="../../images/red-heart.png" alt="heart" class="heart">
-        <img src="../../images/red-heart.png" alt="heart" class="heart">
+        <img src="./images/red-heart.png" alt="heart" class="heart">
+        <img src="./images/red-heart.png" alt="heart" class="heart">
+        <img src="./images/red-heart.png" alt="heart" class="heart">
+        <img src="./images/red-heart.png" alt="heart" class="heart">
+        <img src="./images/red-heart.png" alt="heart" class="heart">
       </div>
     </div>
     <div class="close"></div>
@@ -85,6 +85,7 @@ export function renderRound(): void {
       <div class="answer">${questionWords[3].wordTranslate}</div>
     </div>
   </div>`;
+    removeListener();
     listener();
     timer(30);
     if (wrapper !== document.querySelector('.page-audio-call-start-wrapper')) {
@@ -122,8 +123,19 @@ function listener() {
       compareAnswer(e);
     }
   });
-  document.addEventListener('keydown', (e: KeyboardEvent) => {
+  document.onkeydown = (e: KeyboardEvent) => {
     keyBoard(e);
+  };
+}
+
+function removeListener() {
+  (document.querySelector('.close') as HTMLElement).removeEventListener('click', closeRound);
+  (document.querySelector('.sound-icon') as HTMLElement).removeEventListener('click', playSound);
+  (document.querySelector('.full-screen') as HTMLElement).removeEventListener('click', fullScreen);
+  (document.querySelector('.answers') as HTMLElement).removeEventListener('click', (e: Event) => {
+    if ((e.target as HTMLElement).classList.contains('answer')) {
+      compareAnswer(e);
+    }
   });
 }
 
@@ -131,7 +143,6 @@ function keyBoard(e: KeyboardEvent) {
   if (e.key == '1' || e.key == '2' || e.key == '3' || e.key == '4') {
     document.querySelectorAll('.answer')[+e.key - 1].classList.add('answer-hover');
     setTimeout(() => {
-      console.log('key');
       compareAnswer(document.querySelectorAll('.answer')[+e.key - 1]!.innerHTML);
     }, 200);
   }
