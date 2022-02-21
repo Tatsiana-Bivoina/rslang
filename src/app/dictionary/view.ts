@@ -301,7 +301,7 @@ async function getEasyWords() {
   const user = new UserData();
   const token = (await user.getToken()).toString();
   const rawResponse = await fetch(
-    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?wordsPerPage=3600&filter={"userWord.difficulty":"easy"}`,
+    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?wordsPerPage=3600&filter=[{"userWord.difficulty":"easy"},{"userWord.optional.testFieldBoolean":true}]`,
     {
       method: 'GET',
       headers: {
@@ -312,5 +312,6 @@ async function getEasyWords() {
     }
   );
   const res = await rawResponse.json();
+  console.log(res, 'easy');
   return res;
 }

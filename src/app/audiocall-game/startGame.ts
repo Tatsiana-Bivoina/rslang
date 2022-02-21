@@ -77,7 +77,8 @@ export async function postUserWords(
   diff?: string,
   methodPut?: string,
   correctCount?: number,
-  errorCount?: number
+  errorCount?: number,
+  learned?: boolean
 ) {
   const method = methodPut ? methodPut : 'POST';
   const user = new UserData();
@@ -91,7 +92,7 @@ export async function postUserWords(
     difficulty: !diff ? 'easy' : `${diff}`,
     optional: {
       testFieldString: 'test',
-      testFieldBoolean: true,
+      testFieldBoolean: learned || true,
       wordId: wordId,
       correctCount: correct,
       errorCount: error
