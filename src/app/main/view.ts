@@ -1,3 +1,11 @@
+import { drawPage } from '../app';
+import { audioCallView } from '../audiocall-game/view';
+import { dictionaryView } from '../dictionary/view';
+import SprintController from '../sprint-game/SprintController';
+import SprintView from '../sprint-game/SprintView';
+import StatisticController from '../statistic/StatisticController';
+import StatisticView from '../statistic/StatisticView';
+
 export async function mainView(): Promise<HTMLDivElement> {
   const response = await fetch('https://raw.githubusercontent.com/vostavhy/landings/dev/.links');
   const link = await response.text();
@@ -52,5 +60,29 @@ export async function mainView(): Promise<HTMLDivElement> {
       </div>      
     </section>
   `;
+
+  const advantages = page.querySelectorAll('.advantage');
+  for (const advantage of advantages) {
+    advantage.addEventListener('click', async (event) => {
+      const target = event.currentTarget as Element;
+      if (target.matches('.advantage-dictionary')) {
+        await drawPage(dictionaryView);
+      }
+      if (target.matches('.advantage-sprint')) {
+        const sprint = new SprintView();
+        await drawPage(sprint.sprintView);
+      }
+      if (target.matches('.advantage-audio-call')) {
+        await drawPage(audioCallView);
+      }
+      if (target.matches('.advantage-statistic')) {
+        const statistic = new StatisticView();
+        const statisticController = new StatisticController();
+        await statisticController.getUserData();
+        await drawPage(statistic.statisticView);
+        statisticController.updatePage();
+      }
+    });
+  }
   return page;
 }
