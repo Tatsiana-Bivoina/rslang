@@ -31,7 +31,7 @@ $green: rgb(33, 143, 39);
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 120px);
   min-width: 100vh;
   font-family: 'Amatic';
   font-size: 30px;
@@ -78,7 +78,7 @@ $green: rgb(33, 143, 39);
 }
 
 .audio-call-play-wrapper {
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 120px);
   min-width: 100vh;
   background-image: url('../images/backs/6.jpg');
   backdrop-filter: brightness(50%);
@@ -91,7 +91,7 @@ $green: rgb(33, 143, 39);
 }
 
 .audio-call-play {
-  height: calc(100vh - 60px);
+  height: calc(100vh - 120px);
   backdrop-filter: brightness(50%);
   font-family: 'Amatic Bold';
   font-size: 46px;
