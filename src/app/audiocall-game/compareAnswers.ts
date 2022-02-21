@@ -55,7 +55,7 @@ export async function compareAnswer(e: Answer) {
     }
     if (authorized) {
       errorCount++;
-      postUserWords(rightWord, 'easy', method, correctCount, errorCount);
+      postUserWords(rightWord, 'easy', method, correctCount, errorCount, false);
     }
   } else {
     score += 10;

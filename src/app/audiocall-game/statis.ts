@@ -12,7 +12,6 @@ const wrongWords: Word[] = [];
 
 export async function staticRound(arr: Word[], score: number) {
   stopTimer();
-  console.log(score);
   const user = new UserData();
   const token = (await user.getToken()).toString();
   audioArr.length = 0;
@@ -51,7 +50,7 @@ export async function staticRound(arr: Word[], score: number) {
     const resultDiv = document.createElement('div');
     resultDiv.classList.add('result');
     resultDiv.innerHTML = `
-      <div class="sound-icon"><img src="./../images/outline_volume_up_white_24dp.png" alt="audio" class="audio"></div>
+      <div class="sound-icon"><img src="./images/outline_volume_up_white_24dp.png" alt="audio" class="audio"></div>
       <div class="word-result">${result.word}</div>
       <div class="transcription">${result.transcription}</div>
       <div class="translate">${result.wordTranslate}</div>`;

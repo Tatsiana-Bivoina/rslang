@@ -16,6 +16,9 @@ export interface Word {
   textExampleTranslate: string;
   userWord: {
     optional: {
+      testFieldString: string;
+      testFieldBoolean: boolean;
+      wordId: string;
       correctCount: number;
       errorCount: number;
     };
