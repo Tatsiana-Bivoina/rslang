@@ -92,7 +92,7 @@ export async function postUserWords(
     difficulty: !diff ? 'easy' : `${diff}`,
     optional: {
       testFieldString: 'test',
-      testFieldBoolean: learned || true,
+      testFieldBoolean: learned == undefined ? true : learned,
       wordId: wordId,
       correctCount: correct,
       errorCount: error

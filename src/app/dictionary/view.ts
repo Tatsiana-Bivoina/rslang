@@ -155,14 +155,15 @@ async function renderPage(wordsArr: Word[], id?: string) {
       });
       easyArr.forEach((word) => {
         if (word._id === wordsArr[i].id) {
-          color = '#00ff0e';
-          learned.class = 'learned-word';
-          learned.word = 'Не знаю';
           learned.correct = word.userWord.optional!.correctCount.toString();
           learned.error = word.userWord.optional!.errorCount.toString();
-          if (learned.correct < learned.error) {
+          if (learned.correct < learned.error || !word.userWord.optional.testFieldBoolean) {
             learned.word = 'Уже знаю';
             learned.class = 'learned';
+          } else {
+            color = '#00ff0e';
+            learned.class = 'learned-word';
+            learned.word = 'Не знаю';
           }
         }
       });
@@ -301,7 +302,7 @@ async function getEasyWords() {
   const user = new UserData();
   const token = (await user.getToken()).toString();
   const rawResponse = await fetch(
-    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?wordsPerPage=3600&filter=[{"userWord.difficulty":"easy"},{"userWord.optional.testFieldBoolean":true}]`,
+    `https://rslang-leanwords.herokuapp.com/users/${user.userId}/aggregatedWords?wordsPerPage=3600&filter={"userWord.difficulty":"easy"}`,
     {
       method: 'GET',
       headers: {
@@ -312,6 +313,5 @@ async function getEasyWords() {
     }
   );
   const res = await rawResponse.json();
-  console.log(res, 'easy');
   return res;
 }
