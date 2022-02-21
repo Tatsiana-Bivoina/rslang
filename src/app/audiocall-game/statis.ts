@@ -51,7 +51,7 @@ export async function staticRound(arr: Word[], score: number) {
     const resultDiv = document.createElement('div');
     resultDiv.classList.add('result');
     resultDiv.innerHTML = `
-      <div class="sound-icon"><img src="../../images/outline_volume_up_white_24dp.png" alt="audio" class="audio"></div>
+      <div class="sound-icon"><img src="./../images/outline_volume_up_white_24dp.png" alt="audio" class="audio"></div>
       <div class="word-result">${result.word}</div>
       <div class="transcription">${result.transcription}</div>
       <div class="translate">${result.wordTranslate}</div>`;
@@ -62,7 +62,7 @@ export async function staticRound(arr: Word[], score: number) {
     const resultDiv = document.createElement('div');
     resultDiv.classList.add('result');
     resultDiv.innerHTML = `
-      <div class="sound-icon"><img src="../../images/outline_volume_up_white_24dp.png" alt="audio" class="audio"></div>
+      <div class="sound-icon"><img src="./images/outline_volume_up_white_24dp.png" alt="audio" class="audio"></div>
       <div class="word-result">${result.word}</div>
       <div class="transcription">${result.transcription}</div>
       <div class="translate">${result.wordTranslate}</div>`;
@@ -75,7 +75,7 @@ export async function staticRound(arr: Word[], score: number) {
     <div class="results-right"><div class="right-header">Изученные слова: <span class="right-span"> ${rightWords.length} </span></div></div>
     </div>
     <div class="close"></div>
-    <div class="repeat"><img src="../images/replay.png" class="repeat-img"></div></div>`;
+    <div class="repeat"><img src="./images/replay.png" class="repeat-img"></div></div>`;
   endPage.querySelector('.results-wrong')?.append(fragmentWrong);
   endPage.querySelector('.results-right')?.append(fragmentRight);
   const wrapperAudioPlay = document.querySelector('.audio-call-play-wrapper') as HTMLElement;
