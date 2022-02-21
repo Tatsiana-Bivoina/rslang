@@ -72,9 +72,16 @@ export class App {
         case Menu.sprint:
           const sprint = new SprintView();
           const sprintController = new SprintController();
-          await drawPage(sprint.sprintView);
+          if (document.querySelector('.page__dictionary')) {
+            await sprintController.getWordsCollection(i, pageNum.toString());
+            await drawPage(sprint.sprintViewFromDictionary);
+            sprint.sprintGameView();
+            sprintController.startGame();
+          } else {
+            await drawPage(sprint.sprintView);
+            await sprintController.chooseLevel();
+          }
           await sprintController.toggleFullScreen();
-          await sprintController.chooseLevel();
           await sprintController.closeGame();
           break;
         case Menu.dictionary:
@@ -91,7 +98,9 @@ export class App {
           const statisticController = new StatisticController();
           await statisticController.getUserData();
           await drawPage(statistic.statisticView);
-          statisticController.updatePage();
+          if (localStorage.getItem('name')) {
+            statisticController.updatePage();
+          }
           break;
       }
     });

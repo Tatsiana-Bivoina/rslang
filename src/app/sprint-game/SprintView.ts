@@ -32,8 +32,8 @@ export default class SprintView {
     return page;
   }
 
-  sprintGameView() {
-    const mainContent: HTMLElement | null = document.querySelector('.main-content');
+  sprintGameView(): void {
+    const mainContent: HTMLDivElement | null = document.querySelector('.main-content');
     if (mainContent) {
       mainContent.innerHTML = '';
       mainContent.innerHTML = `
@@ -77,6 +77,17 @@ export default class SprintView {
         </div>
       `;
     }
+  }
+
+  async sprintViewFromDictionary(): Promise<HTMLDivElement> {
+    const content: HTMLDivElement = document.createElement('div');
+    content.classList.add('page__sprint');
+    content.innerHTML = `
+      <button class="btn btn-exit"></button>
+      <button class="btn btn-fullscreen"></button>
+      <div class="main-content"></div>
+    `;
+    return content;
   }
 
   sprintStatisticView() {

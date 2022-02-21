@@ -115,6 +115,13 @@ export default class SprintController {
     if (typeof response !== 'undefined') {
       SprintController.gameStatistic.learnedWords = response.learnedWords;
       SprintController.gameStatistic.optional.statistics = JSON.parse(response.optional.statistics);
+    } else {
+      SprintController.gameStatistic = {
+        learnedWords: 0,
+        optional: {
+          statistics: []
+        }
+      };
     }
   }
 
@@ -150,20 +157,19 @@ export default class SprintController {
     });
   }
 
-  async getWordsCollection(): Promise<void> {
+  async getWordsCollection(level?: string, page?: string): Promise<void> {
+    if (level && page) {
+      this.level = level;
+      this.page = page;
+    }
     if (this.userId !== '') {
+      this.token = await this.userData.getToken();
       SprintService.wordCollection = await this.sprintService.getAggregatedWords(
         this.level,
         this.page,
         this.userId,
         this.token
       );
-      if (SprintService.wordCollection.length < 20) {
-        this.page = Math.floor(this.getRandomNumber()).toString();
-        const response = await this.sprintService.getAggregatedWords(this.level, this.page, this.userId, this.token);
-        SprintService.wordCollection = SprintService.wordCollection.concat(response);
-      }
-      console.log(SprintService.wordCollection);
     } else {
       SprintService.wordCollection = await this.sprintService.getWords(this.level, this.page);
     }
@@ -282,6 +288,12 @@ export default class SprintController {
       this.pressedBtn = 'btnTrue';
       this.nextWord();
     });
+    if (this.index === SprintService.wordCollection.length - 1) {
+      btnTrue?.removeEventListener('click', () => {
+        this.pressedBtn = 'btnTrue';
+        this.nextWord();
+      });
+    }
   }
 
   private addListenerToArrows(): void {
@@ -295,6 +307,18 @@ export default class SprintController {
         this.nextWord();
       }
     });
+    if (this.index === SprintService.wordCollection.length - 1) {
+      document.removeEventListener('keydown', (event) => {
+        if (event.code == 'ArrowRight') {
+          this.pressedBtn = 'btnTrue';
+          this.nextWord();
+        }
+        if (event.code == 'ArrowLeft') {
+          this.pressedBtn = 'btnFalse';
+          this.nextWord();
+        }
+      });
+    }
   }
 
   private addListenerToBtnFalse(): void {
@@ -303,6 +327,12 @@ export default class SprintController {
       this.pressedBtn = 'btnFalse';
       this.nextWord();
     });
+    if (this.index === SprintService.wordCollection.length - 1) {
+      btnFalse?.removeEventListener('click', () => {
+        this.pressedBtn = 'btnFalse';
+        this.nextWord();
+      });
+    }
   }
 
   private async nextWord(): Promise<void> {
@@ -321,6 +351,7 @@ export default class SprintController {
     } else {
       currentWordId = SprintService.wordCollection[this.index].id;
     }
+
     if (isRight && typeof currentWordId !== 'undefined') {
       this.chooseWrightWord(checkboxes);
       this.userChoiseOptional.correctCount = 1;
@@ -474,7 +505,6 @@ export default class SprintController {
   // Statistic
 
   private async updateStatisticPage(wordStatistic: GameResult[], totalPoints: number): Promise<void> {
-    console.log(this.statistics.learnedWords);
     const pointsTitle: Element | null = document.querySelector('.total-points-title');
     if (pointsTitle) {
       pointsTitle.innerHTML = `Набрано ${totalPoints} очков.`;

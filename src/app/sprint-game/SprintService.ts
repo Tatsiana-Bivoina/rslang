@@ -5,7 +5,8 @@ export default class SprintService {
 
   async getWords(level: string, page: string): Promise<Word[]> {
     try {
-      const response = await fetch(`https://rslang-leanwords.herokuapp.com/words?page=${page}&group=${level}`);
+      const response = await fetch(`
+      https://rslang-leanwords.herokuapp.com/words?page=${page}&group=${level}&wordsPerPage=20`);
       const words: Word[] = await response.json();
       return words;
     } catch (error) {
@@ -14,7 +15,7 @@ export default class SprintService {
   }
 
   async getAggregatedWords(level: string, page: string, id: string, token: string): Promise<Word[]> {
-    const url = `https://rslang-leanwords.herokuapp.com/users/${id}/aggregatedWords?page=${page}&group=${level}`;
+    const url = `https://rslang-leanwords.herokuapp.com/users/${id}/aggregatedWords?page=${page}&group=${level}&wordsPerPage=20`;
     try {
       const response: Response = await fetch(url, {
         method: 'GET',
@@ -99,7 +100,8 @@ export default class SprintService {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Content-Length': '145'
         },
         body: JSON.stringify(requestData)
       });
