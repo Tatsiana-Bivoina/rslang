@@ -53,7 +53,7 @@ export async function mainView(): Promise<HTMLDivElement> {
       <div class="wrapper wrapper-video">
         <h1 class="section__title">Видеопрезентация</h1>
         <div class="video">
-          <iframe width="800" height="500" src="${link}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
+          <iframe width="100%" height="100%" src="${link}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen>
           </iframe>
         </div>
       </div>      
