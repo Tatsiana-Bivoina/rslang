@@ -1,0 +1,16 @@
+$color-primary: #3f51b5;
+$color-primary-darker: darken($color-primary, 10%);
+$color-primary-lighter: lighten($color-primary, 10%);
+
+$color-font: #ffffff;
+$color-font-darker: darken($color-font, 10%);
+
+$color-font-additional: rgba(0, 0, 0, 0.55);
+
+$color-light: #f1f1f1;
+$color-light-darker: darken($color-light, 10%);
+
+$border-radius: 5px;
+$box-shadow: 0px 3px 8px 0px rgba(34, 60, 80, 0.2);
+
+$color-error: #ff2d00;
