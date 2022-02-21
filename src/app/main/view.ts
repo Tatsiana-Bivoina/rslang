@@ -1,7 +1,6 @@
 import { drawPage } from '../app';
 import { audioCallView } from '../audiocall-game/view';
 import { dictionaryView } from '../dictionary/view';
-import SprintController from '../sprint-game/SprintController';
 import SprintView from '../sprint-game/SprintView';
 import StatisticController from '../statistic/StatisticController';
 import StatisticView from '../statistic/StatisticView';
