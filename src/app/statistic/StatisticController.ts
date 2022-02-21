@@ -78,6 +78,8 @@ export default class StatisticController {
           this.audiocallWrongWords.push(...el.wordsFalseId);
         }
       });
+    } else {
+      this.updatePage();
     }
   }
 
@@ -97,8 +99,15 @@ export default class StatisticController {
 
     if (allGamesCount && learnedWords && longestSeries && percentWrightWords) {
       allGamesCount.innerHTML = `${this.allGamesStatistic.length}`;
+      if (this.sprintGameStatistic.length !== 0 && this.audiocallGameStatistic.length !== 0) {
+        const sprintWords = this.sprintGameStatistic[this.sprintGameStatistic.length - 1].learnedWords.length;
+        const audiocallWords = this.audiocallGameStatistic[this.audiocallGameStatistic.length - 1].learnedWords.length;
+        learnedWords.innerHTML = `${sprintWords + audiocallWords}`;
+      }
       learnedWords.innerHTML = `${this.allLearnedWords}`;
-      percentWrightWords.innerHTML = `${Math.round(this.countPercentWrightWords(wrightWords, wrongWords))}%`;
+      if (wrightWords !== 0 && wrongWords !== 0) {
+        percentWrightWords.innerHTML = `${Math.round(this.countPercentWrightWords(wrightWords, wrongWords))}%`;
+      }
       longestSeries.innerHTML = `${this.countLongestSeries(this.allGamesStatistic)}`;
     }
   }
@@ -113,8 +122,13 @@ export default class StatisticController {
 
     if (allGamesCount && learnedWords && longestSeries && percentWrightWords) {
       allGamesCount.innerHTML = `${this.sprintGameStatistic.length}`;
-      learnedWords.innerHTML = `${this.countLearnedWords(this.sprintLearnedWords)}`;
-      percentWrightWords.innerHTML = `${Math.round(this.countPercentWrightWords(wrightWords, wrongWords))}%`;
+      if (this.sprintGameStatistic.length !== 0) {
+        const words = this.sprintGameStatistic[this.sprintGameStatistic.length - 1].learnedWords.length;
+        learnedWords.innerHTML = `${words}`;
+      }
+      if (wrightWords !== 0 && wrongWords !== 0) {
+        percentWrightWords.innerHTML = `${Math.round(this.countPercentWrightWords(wrightWords, wrongWords))}%`;
+      }
       longestSeries.innerHTML = `${this.countLongestSeries(this.sprintGameStatistic)}`;
     }
   }
@@ -129,8 +143,14 @@ export default class StatisticController {
 
     if (allGamesCount && learnedWords && longestSeries && percentWrightWords) {
       allGamesCount.innerHTML = `${this.audiocallGameStatistic.length}`;
+      if (this.audiocallGameStatistic.length !== 0) {
+        const words = this.audiocallGameStatistic[this.audiocallGameStatistic.length - 1].learnedWords.length;
+        learnedWords.innerHTML = `${words}`;
+      }
       learnedWords.innerHTML = `${this.countLearnedWords(this.audiocallLearnedWords)}`;
-      percentWrightWords.innerHTML = `${Math.round(this.countPercentWrightWords(wrightWords, wrongWords))}%`;
+      if (wrightWords !== 0 && wrongWords !== 0) {
+        percentWrightWords.innerHTML = `${Math.round(this.countPercentWrightWords(wrightWords, wrongWords))}%`;
+      }
       longestSeries.innerHTML = `${this.countLongestSeries(this.audiocallGameStatistic)}`;
     }
   }
@@ -140,11 +160,13 @@ export default class StatisticController {
       arr.sort((a, b) => b.seriesTrueAnswers - a.seriesTrueAnswers);
       return arr[0].seriesTrueAnswers;
     }
+    return 0;
   }
 
   countPercentWrightWords(wrightWords: number, wrongWords: number): number {
     const allWordsCount: number = wrightWords + wrongWords;
-    const percent = wrightWords / (allWordsCount / 100);
+    let percent = 0;
+    percent = wrightWords / (allWordsCount / 100);
     return percent;
   }
 
