@@ -157,7 +157,7 @@ async function renderPage(wordsArr: Word[], id?: string) {
         if (word._id === wordsArr[i].id) {
           learned.correct = word.userWord.optional!.correctCount.toString();
           learned.error = word.userWord.optional!.errorCount.toString();
-          if (learned.correct < learned.error || !word.userWord.optional.testFieldBoolean || learned.correct == '0') {
+          if (learned.correct < learned.error || !word.userWord.optional.testFieldBoolean) {
             learned.word = 'Уже знаю';
             learned.class = 'learned';
           } else {
@@ -256,14 +256,15 @@ async function addToComplecative(word: Word, e: Event, color?: string) {
   }
 }
 
-function addToLearned(word: Word, e: Event, color?: string) {
+async function addToLearned(word: Word, e: Event, color?: string) {
+  const method = `${await getMethod(word)}`;
   if (!(e.target as HTMLElement).classList.contains('learned-word')) {
     (e.target as HTMLElement).classList.add('learned-word');
     (
       (e.target as Element).closest('.shadow') as HTMLElement
     ).style.background = `linear-gradient(rgba(0, 0, 0, 0), #00ff0e 100%)`;
     (e.target as HTMLElement).innerHTML = 'Не знаю';
-    postUserWords(word, 'easy');
+    postUserWords(word, 'easy', method);
   } else {
     (e.target as HTMLElement).classList.remove('learned-word');
     (
