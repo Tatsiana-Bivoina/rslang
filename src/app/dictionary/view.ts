@@ -1,4 +1,4 @@
-import { postUserWords, getUsersWords } from '../audiocall-game/startGame';
+import { postUserWords, getUsersWords, getUsersWord } from '../audiocall-game/startGame';
 import { UserData } from '../authorization/storage';
 import { Word, userWord } from '../audiocall-game/models';
 import { correctCount } from '../audiocall-game/compareAnswers';
@@ -157,7 +157,7 @@ async function renderPage(wordsArr: Word[], id?: string) {
         if (word._id === wordsArr[i].id) {
           learned.correct = word.userWord.optional!.correctCount.toString();
           learned.error = word.userWord.optional!.errorCount.toString();
-          if (learned.correct < learned.error || !word.userWord.optional.testFieldBoolean) {
+          if (learned.correct < learned.error || !word.userWord.optional.testFieldBoolean || learned.correct == '0') {
             learned.word = 'Уже знаю';
             learned.class = 'learned';
           } else {
@@ -234,19 +234,12 @@ async function renderPage(wordsArr: Word[], id?: string) {
   <div class="pag-but double-right-arrow" id="double-r"></div>`;
 }
 
-async function getMethod(word: Word): Promise<string> {
-  let method: string;
-  const userArr: userWord[] = Array.from(await getUsersWords());
-  for (let i = 0; i < userArr.length; i++) {
-    if (userArr[i].optional.wordId !== word.id) {
-      return 'POST';
-    }
-  }
-  return 'PUT';
+async function getMethod(word: Word): Promise<void | string> {
+  return (await getUsersWord(word)) ? 'PUT' : 'POST';
 }
 
 async function addToComplecative(word: Word, e: Event, color?: string) {
-  const method = (await getMethod(word)).toString();
+  const method = `${await getMethod(word)}`;
   if (!(e.target as HTMLElement).classList.contains('hard-word')) {
     postUserWords(word, 'hard', method);
     (e.target as HTMLElement).classList.add('hard-word');

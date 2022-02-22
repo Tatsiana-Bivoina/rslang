@@ -29,7 +29,7 @@ $color-form-bg-darker: #ddd;
     .words-wrap {
       display: flex;
       flex-wrap: wrap;
-      overflow: scroll;
+      overflow-y: scroll;
       color: rgb(78, 78, 78);
     }
     .words {
@@ -37,7 +37,7 @@ $color-form-bg-darker: #ddd;
       flex-wrap: wrap;
       align-items: center;
       justify-content: center;
-      overflow: scroll;
+      overflow-y: scroll;
       color: rgb(78, 78, 78);
       .word-card {
         border-radius: 50%;
@@ -76,6 +76,7 @@ $color-form-bg-darker: #ddd;
               height: 35px;
               background-image: url('../images/outline_volume_up_white_24dp.png');
               background-size: contain;
+              background-repeat: no-repeat;
             }
           }
           .translate {
@@ -99,6 +100,7 @@ $color-form-bg-darker: #ddd;
             height: 35px;
             background-image: url('../images/outline_volume_up_white_24dp.png');
             background-size: contain;
+            background-repeat: no-repeat;
           }
           // text-align: center;
         }
@@ -151,17 +153,9 @@ $color-form-bg-darker: #ddd;
   }
 }
 
-.translate {
-}
-.transcription {
-}
-.meaning-en {
-}
-.example-en {
-}
-.meaning-ru {
-}
-.example-ru {
-}
-.nav-page {
+@media (min-width: 800px) {
+  .shadow {
+    font-size: 18px;
+    width: min-content;
+  }
 }
