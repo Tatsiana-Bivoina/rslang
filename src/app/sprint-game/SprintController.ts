@@ -398,7 +398,7 @@ export default class SprintController {
   }
 
   private chooseWrightWord(checkboxes: NodeListOf<Element>) {
-    const audioWright: HTMLAudioElement = new Audio('../images/sprint-game/audio/wright.mp3');
+    const audioWright: HTMLAudioElement = new Audio('./images/sprint-game/audio/wright.mp3');
     audioWright.play();
     this.counter += 1;
     this.checkboxCount += 1;
@@ -414,7 +414,7 @@ export default class SprintController {
   }
 
   private chooseWrongWord(checkboxes: NodeListOf<Element>) {
-    const audioWrong: HTMLAudioElement = new Audio('../images/sprint-game/audio/wrong.mp3');
+    const audioWrong: HTMLAudioElement = new Audio('./images/sprint-game/audio/wrong.mp3');
     audioWrong.play();
     this.counter = 0;
     this.checkboxCount = 0;
@@ -451,7 +451,7 @@ export default class SprintController {
     for (let i = 0; i < this.checkboxCount; i++) {
       checkboxes[i].setAttribute(
         'style',
-        'background-image: url("../images/sprint-game/svg/circle-check-solid.svg"); background-repeat: no-repeat; bacground-size: cover'
+        'background-image: url("./images/sprint-game/svg/circle-check-solid.svg"); background-repeat: no-repeat; bacground-size: cover'
       );
     }
   }
