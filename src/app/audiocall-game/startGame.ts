@@ -84,10 +84,10 @@ export async function postUserWords(
   const user = new UserData();
   const token = (await user.getToken()).toString();
   const wordId = word.id ? word.id : word._id;
-  const otherCorrectCount = method == 'POST' ? 0 : (await getUsersWord(word)).optional.correctCount;
-  const otherErrorCount = method == 'POST' ? 0 : (await getUsersWord(word)).optional.errorCount;
-  const correct = correctCount !== undefined ? correctCount : otherCorrectCount;
-  const error = errorCount !== undefined ? errorCount : otherErrorCount;
+  const otherCorrectCount = method == 'POST' ? '0' : `${(await getUsersWord(word)).optional.correctCount}`;
+  const otherErrorCount = method == 'POST' ? '0' : `${(await getUsersWord(word)).optional.errorCount}`;
+  const correct = correctCount !== undefined ? correctCount : Number(otherCorrectCount);
+  const error = errorCount !== undefined ? errorCount : Number(otherErrorCount);
   const aboutWord = {
     difficulty: !diff ? 'easy' : `${diff}`,
     optional: {

@@ -281,3 +281,42 @@ $green: rgb(33, 143, 39);
     right: 60px;
   }
 }
+
+@media (max-height: 600px) {
+  .audio-call-play{
+    .answers{
+      margin-top: 15vh;
+    }
+  }
+}
+
+@media (max-height: 500px) {
+  .audio-call-play{
+    .answers{
+      margin-top: 0;
+    }
+  }
+  .page-audio-call-start {
+    .describe-card{
+      padding: 30px 30px 10px 30px;
+    }
+  }
+}
+
+@media (max-width: 800px) {
+  .page-audio-call-start {
+    .describe-card{
+      width: 65%;
+    }
+  }
+}
+
+@media (max-width: 650px) {
+  .page-audio-call-start {
+    .describe-card{
+      width: 80%;
+    }
+  }
+}
+
+
